@@ -1,6 +1,7 @@
 package com.spring.board.service;
 
 import com.spring.board.domain.User;
+import com.spring.board.exception.DuplicationLoginIdException;
 import com.spring.board.repository.UserRepository;
 import com.spring.board.request.user.EditUserRequest;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 class UserServiceTest {
@@ -43,6 +45,30 @@ class UserServiceTest {
         assertEquals("닉네임", saveUser.getNickname());
         assertEquals("아이디", saveUser.getLoginId());
         assertEquals("비밀번호", saveUser.getPassword());
+    }
+
+    @Test
+    @DisplayName("회원 아이디 중복 테스트")
+    void duplicationTest() {
+        //given
+        User user1 = User.builder()
+                .nickname("닉네임")
+                .loginId("아이디")
+                .password("비밀번호")
+                .build();
+
+        User user2 = User.builder()
+                .nickname("닉네임")
+                .loginId("아이디")
+                .password("비밀번호")
+                .build();
+
+        userService.save(user1);
+
+        //expected
+        assertThrows(DuplicationLoginIdException.class, () -> {
+            userService.save(user2);
+        });
     }
 
     @Test

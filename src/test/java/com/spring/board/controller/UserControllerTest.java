@@ -74,6 +74,33 @@ class UserControllerTest {
     }
 
     @Test
+    @DisplayName("/user/save 중복 테스트")
+    void duplicationSaveTest() throws Exception {
+        //given
+        User user1 = User.builder()
+                .nickname("닉네임")
+                .loginId("아이디")
+                .password("비밀번호")
+                .build();
+
+        userRepository.save(user1);
+
+        User user2 = User.builder()
+                .nickname("닉네임")
+                .loginId("아이디")
+                .password("비밀번호")
+                .build();
+
+        String json = objectMapper.writeValueAsString(user2);
+
+        mockMvc.perform(post("/user/save")
+                        .contentType(APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isConflict())
+                .andDo(print());
+    }
+
+    @Test
     @DisplayName("/user/edit/{userId} 성공 테스트")
     void successEditTest() throws Exception {
         //given
