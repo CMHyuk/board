@@ -6,7 +6,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
+import static javax.persistence.CascadeType.ALL;
 import static lombok.AccessLevel.PROTECTED;
 
 @Getter
@@ -24,6 +27,9 @@ public class User {
     private String nickname;
     private String loginId;
     private String password;
+
+    @OneToMany(mappedBy = "user", cascade = ALL)
+    private List<Board> boards = new ArrayList<>();
 
     @Builder
     public User(String nickname, String loginId, String password) {
