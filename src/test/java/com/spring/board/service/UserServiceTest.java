@@ -1,7 +1,9 @@
 package com.spring.board.service;
 
+import com.spring.board.domain.Board;
 import com.spring.board.domain.User;
 import com.spring.board.exception.DuplicationLoginIdException;
+import com.spring.board.repository.BoardRepository;
 import com.spring.board.repository.UserRepository;
 import com.spring.board.request.user.EditUserRequest;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,6 +11,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -22,9 +29,13 @@ class UserServiceTest {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    BoardRepository boardRepository;
+
     @BeforeEach
     void clean() {
         userRepository.deleteAll();
+        boardRepository.deleteAll();
     }
 
     @Test
@@ -110,5 +121,37 @@ class UserServiceTest {
 
         //then
         assertEquals(0, userRepository.count());
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("회원이 작성한 게시글 조회")
+    void getUserBoards() {
+        //given
+        User user = User.builder()
+                .nickname("닉네임")
+                .loginId("아이디")
+                .password("비밀번호")
+                .build();
+
+        User savedUser = userRepository.save(user);
+
+        List<Board> boards = IntStream.range(0, 10)
+                .mapToObj(i -> Board.builder()
+                        .title("제목" + i)
+                        .content("내용" + i)
+                        .user(savedUser)
+                        .build())
+                .collect(Collectors.toList());
+
+        savedUser.setBoards(boards);
+
+        boardRepository.saveAll(boards);
+
+        //when
+        List<Board> userBoards = userService.getUserBoards(savedUser.getId());
+
+        //then
+        assertEquals(userBoards.size(), 10);
     }
 }
