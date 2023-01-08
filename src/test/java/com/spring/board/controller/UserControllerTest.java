@@ -1,7 +1,9 @@
 package com.spring.board.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.spring.board.domain.Board;
 import com.spring.board.domain.User;
+import com.spring.board.repository.BoardRepository;
 import com.spring.board.repository.UserRepository;
 import com.spring.board.request.user.EditUserRequest;
 import com.spring.board.request.user.SaveUserRequest;
@@ -16,10 +18,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 import static com.spring.board.Const.LOGIN_USER;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -30,6 +35,9 @@ class UserControllerTest {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    BoardRepository boardRepository;
 
     @Mock
     private MockHttpSession mockHttpSession;
@@ -101,7 +109,36 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("/user/edit/{userId} 성공 테스트")
+    @DisplayName("/user/{userId}/boards 사용자가 작성한 게시글 조회")
+    void getUserBoardsTest() throws Exception {
+        //given
+        User user = User.builder()
+                .nickname("닉네임")
+                .loginId("아이디")
+                .password("비밀번호")
+                .build();
+
+        User savedUser = userRepository.save(user);
+
+        List<Board> boards = IntStream.range(0, 10).mapToObj(i -> Board.builder()
+                        .title("제목" + i)
+                        .content("내용" + i)
+                        .user(savedUser)
+                        .build())
+                .collect(Collectors.toList());
+
+        boardRepository.saveAll(boards);
+
+        //expected
+        mockMvc.perform(get("/user/{userId}/boards", savedUser.getId())
+                        .contentType(APPLICATION_JSON))
+                .andExpect(jsonPath("$.length()").value(10))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("/user/edit/{userId} 사용자 비밀번호 수정 테스트")
     void successEditTest() throws Exception {
         //given
         User user = User.builder()
