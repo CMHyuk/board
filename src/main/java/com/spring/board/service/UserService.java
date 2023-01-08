@@ -1,5 +1,6 @@
 package com.spring.board.service;
 
+import com.spring.board.domain.Board;
 import com.spring.board.domain.User;
 import com.spring.board.exception.DuplicationLoginIdException;
 import com.spring.board.exception.UserNotFound;
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -17,6 +19,12 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+
+    public List<Board> getUserBoards(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(UserNotFound::new);
+        return user.getBoards();
+    }
 
     public User save(User user) {
         validateDuplicationLoginId(user);
