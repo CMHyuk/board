@@ -7,11 +7,15 @@ import com.spring.board.exception.InvalidRequest;
 import com.spring.board.repository.BoardRepository;
 import com.spring.board.repository.UserRepository;
 import com.spring.board.request.board.EditBoardRequest;
+import com.spring.board.request.board.WriteBoardRequest;
+import com.spring.board.response.board.EditBoardResponse;
+import com.spring.board.response.board.WriteBoardResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,6 +39,7 @@ class BoardServiceTest {
     }
 
     @Test
+    @Transactional
     @DisplayName("게시글 저장 테스트")
     void writeTest() {
         //given
@@ -46,19 +51,16 @@ class BoardServiceTest {
 
         userRepository.save(user);
 
-        Board board = Board.builder()
-                .title("제목")
-                .content("내용")
-                .user(user)
-                .build();
+        WriteBoardRequest request = new WriteBoardRequest();
+        request.setTitle("제목");
+        request.setContent("내용");
 
         //when
-        Board savedBoard = boardService.write(board);
+        WriteBoardResponse write = boardService.write(request, user.getId());
 
         //then
-        assertEquals(savedBoard.getTitle(), "제목");
-        assertEquals(savedBoard.getContent(), "내용");
-        assertEquals(savedBoard.getUser(), user);
+        assertEquals(write.getTitle(), "제목");
+        assertEquals(write.getContent(), "내용");
     }
 
     @Test
@@ -86,11 +88,11 @@ class BoardServiceTest {
         request.setContent("내용수정");
 
         //when
-        Board editBoard = boardService.editBoard(saveBoard.getId(), request, user);
+        EditBoardResponse response = boardService.editBoard(saveBoard.getId(), request, user);
 
         //then
-        assertEquals(editBoard.getTitle(), "제목수정");
-        assertEquals(editBoard.getContent(), "내용수정");
+        assertEquals(response.getTitle(), "제목수정");
+        assertEquals(response.getContent(), "내용수정");
     }
 
     @Test

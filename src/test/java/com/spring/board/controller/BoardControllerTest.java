@@ -6,6 +6,7 @@ import com.spring.board.domain.User;
 import com.spring.board.repository.BoardRepository;
 import com.spring.board.repository.UserRepository;
 import com.spring.board.request.board.EditBoardRequest;
+import com.spring.board.request.board.WriteBoardRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -164,12 +165,11 @@ class BoardControllerTest {
 
         mockHttpSession.setAttribute(LOGIN_USER, savedUser);
 
-        Board board = Board.builder()
-                .title("제목")
-                .content("내용")
-                .build();
+        WriteBoardRequest request = new WriteBoardRequest();
+        request.setTitle("제목");
+        request.setContent("내용");
 
-        String json = objectMapper.writeValueAsString(board);
+        String json = objectMapper.writeValueAsString(request);
 
         //expected
         mockMvc.perform(post("/board/write")
@@ -183,12 +183,11 @@ class BoardControllerTest {
     @Test
     @DisplayName("/board/write 미인증 사용자 요청")
     void createAuthError() throws Exception {
-        Board board = Board.builder()
-                .title("제목")
-                .content("내용")
-                .build();
+        WriteBoardRequest request = new WriteBoardRequest();
+        request.setTitle("제목");
+        request.setContent("내용");
 
-        String json = objectMapper.writeValueAsString(board);
+        String json = objectMapper.writeValueAsString(request);
 
         //expected
         mockMvc.perform(post("/board/write")
@@ -343,7 +342,7 @@ class BoardControllerTest {
         mockMvc.perform(delete("/board/delete/{boardId}", 100L)
                         .contentType(APPLICATION_JSON)
                         .session(mockHttpSession))
-                .andExpect(status().isNotFound())
+                .andExpect(status().isUnauthorized())
                 .andDo(print());
     }
 }
