@@ -4,13 +4,18 @@ import com.spring.board.domain.Board;
 import com.spring.board.domain.User;
 import com.spring.board.exception.BoardNotFound;
 import com.spring.board.exception.InvalidRequest;
+import com.spring.board.exception.UserNotFound;
 import com.spring.board.repository.BoardRepository;
+import com.spring.board.repository.UserRepository;
 import com.spring.board.request.board.EditBoardRequest;
+import com.spring.board.request.board.WriteBoardRequest;
+import com.spring.board.response.board.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -18,34 +23,67 @@ import java.util.List;
 public class BoardService {
 
     private final BoardRepository boardRepository;
+    private final UserRepository userRepository;
 
-    public Board write(Board board) {
-        return boardRepository.save(board);
+    public WriteBoardResponse write(WriteBoardRequest request, Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserNotFound::new);
+
+        Board board = Board.builder()
+                .title(request.getTitle())
+                .content(request.getContent())
+                .user(user)
+                .build();
+
+        Board savedBoard = boardRepository.save(board);
+
+        return WriteBoardResponse.builder()
+                .title(savedBoard.getTitle())
+                .content(savedBoard.getContent())
+                .build();
     }
 
-    public Board get(Long boardId) {
-        return boardRepository.findById(boardId)
+    public BoardResponse get(Long boardId) {
+        Board board = boardRepository.findById(boardId)
                 .orElseThrow(BoardNotFound::new);
+
+        return BoardResponse.builder()
+                .nickname(board.getUser().getNickname())
+                .boardId(board.getId())
+                .title(board.getTitle())
+                .content(board.getContent())
+                .build();
     }
 
-    public List<Board> getBoards() {
-        return boardRepository.findAll();
+    public List<BoardsResponse> getBoards() {
+        List<Board> boards = boardRepository.findAll();
+        return boards.stream()
+                .map(b -> new BoardsResponse(b.getUser().getNickname(), b.getId(), b.getTitle(), b.getContent()))
+                .collect(Collectors.toList());
     }
 
-    public List<Board> findBySearch(String title) {
-        return boardRepository.findByTitleContaining(title);
+    public List<BoardSearchResponse> findBySearch(String title) {
+        List<Board> boards = boardRepository.findByTitleContaining(title);
+        return boards.stream()
+                .map(b -> new BoardSearchResponse(b.getUser().getNickname(), b.getId(), b.getTitle(), b.getContent()))
+                .collect(Collectors.toList());
     }
 
-    public Board editBoard(Long boardId, EditBoardRequest request, User user) {
-        Board findBoard = boardRepository.findById(boardId)
+    public EditBoardResponse editBoard(Long boardId, EditBoardRequest request, User user) {
+        Board board = boardRepository.findById(boardId)
                 .orElseThrow(BoardNotFound::new);
 
-        validateSameUser(user, findBoard);
+        validateSameUser(user, board);
 
-        findBoard.setTitle(request.getTitle());
-        findBoard.setContent(request.getContent());
+        board.setTitle(request.getTitle());
+        board.setContent(request.getContent());
 
-        return findBoard;
+        return EditBoardResponse.builder()
+                .title(board.getTitle())
+                .content(board.getContent())
+                .build();
+
+
     }
 
     public void deleteBoard(Long boardId, User user) {
