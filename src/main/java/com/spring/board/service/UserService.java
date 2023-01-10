@@ -3,15 +3,20 @@ package com.spring.board.service;
 import com.spring.board.domain.Board;
 import com.spring.board.domain.User;
 import com.spring.board.exception.DuplicationLoginIdException;
+import com.spring.board.exception.InvalidRequest;
 import com.spring.board.exception.UserNotFound;
 import com.spring.board.repository.UserRepository;
 import com.spring.board.request.user.EditUserRequest;
+import com.spring.board.request.user.SaveUserRequest;
+import com.spring.board.response.user.SaveUserResponse;
+import com.spring.board.response.user.UserBoardResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -20,15 +25,35 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public List<Board> getUserBoards(Long id) {
+    //n + 1 터짐
+    public List<UserBoardResponse> getUserBoards(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(UserNotFound::new);
-        return user.getBoards();
+
+        List<Board> boards = user.getBoards();
+
+        return boards.stream()
+                .map(u -> new UserBoardResponse(u.getId(), u.getTitle(), u.getContent()))
+                .collect(Collectors.toList());
     }
 
-    public User save(User user) {
+    public SaveUserResponse save(SaveUserRequest request) {
+        User user = User.builder()
+                .nickname(request.getNickname())
+                .loginId(request.getLoginId())
+                .password(request.getPassword())
+                .build();
+
         validateDuplicationLoginId(user);
-        return userRepository.save(user);
+
+        User savedUser = userRepository.save(user);
+
+        return SaveUserResponse.builder()
+                .id(savedUser.getId())
+                .nickname(savedUser.getNickname())
+                .loginId(savedUser.getLoginId())
+                .password(savedUser.getPassword())
+                .build();
     }
 
     private void validateDuplicationLoginId(User user) {
@@ -54,7 +79,7 @@ public class UserService {
                 .orElseThrow(UserNotFound::new);
 
         if (findUser.getId() != user.getId()) {
-            throw new UserNotFound();
+            throw new InvalidRequest();
         }
 
         return findUser;
