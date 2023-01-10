@@ -19,7 +19,8 @@ public class Config implements WebMvcConfigurer {
                 .addPathPatterns("/user/edit/{userId}", "/user/delete/{userId}",
                         "/board/write", "/board/edit/{boardId}", "/board/delete/{boardId}",
                         "/board/{boardId}/comment", "/board/{boardId}/editComment/{commentId}",
-                        "/board/{boardId}/deleteComment/{commentId}");
+                        "/board/{boardId}/deleteComment/{commentId}", "/board/{boardId}/{commentId}/reply",
+                        "/board/{boardId}/{commentId}/editReply/{replyId}", "/board/{boardId}/{commentId}/deleteReply/{replyId}");
     }
 
     @Override
