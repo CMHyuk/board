@@ -26,28 +26,12 @@ public class UserController {
 
     @GetMapping("/user/{userId}/boards")
     public List<UserBoardResponse> getBoards(@PathVariable Long userId) {
-        List<Board> userBoards = userService.getUserBoards(userId);
-        return userBoards.stream()
-                .map(u -> new UserBoardResponse(u.getId(), u.getTitle(), u.getContent()))
-                .collect(Collectors.toList());
+        return userService.getUserBoards(userId);
     }
 
     @PostMapping("/user/save")
     public SaveUserResponse save(@RequestBody @Valid SaveUserRequest request) {
-        User user = User.builder()
-                .nickname(request.getNickname())
-                .loginId(request.getLoginId())
-                .password(request.getPassword())
-                .build();
-
-        User saveUser = userService.save(user);
-
-        return SaveUserResponse.builder()
-                .id(saveUser.getId())
-                .nickname(saveUser.getNickname())
-                .loginId(saveUser.getLoginId())
-                .password(saveUser.getPassword())
-                .build();
+        return userService.save(request);
     }
 
     @PatchMapping("/user/edit/{userId}")

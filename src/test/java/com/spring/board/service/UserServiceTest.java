@@ -6,6 +6,9 @@ import com.spring.board.exception.DuplicationLoginIdException;
 import com.spring.board.repository.BoardRepository;
 import com.spring.board.repository.UserRepository;
 import com.spring.board.request.user.EditUserRequest;
+import com.spring.board.request.user.SaveUserRequest;
+import com.spring.board.response.user.SaveUserResponse;
+import com.spring.board.response.user.UserBoardResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -42,43 +45,40 @@ class UserServiceTest {
     @DisplayName("회원 저장 테스트")
     void saveTest() {
         //given
-        User user = User.builder()
-                .nickname("닉네임")
-                .loginId("아이디")
-                .password("비밀번호")
-                .build();
+        SaveUserRequest request = new SaveUserRequest();
+        request.setNickname("닉네임");
+        request.setLoginId("아이디");
+        request.setPassword("비밀번호");
 
         //when
-        User saveUser = userService.save(user);
+        SaveUserResponse savedUser = userService.save(request);
 
         //then
         assertEquals(1L, userRepository.count());
-        assertEquals("닉네임", saveUser.getNickname());
-        assertEquals("아이디", saveUser.getLoginId());
-        assertEquals("비밀번호", saveUser.getPassword());
+        assertEquals("닉네임", savedUser.getNickname());
+        assertEquals("아이디", savedUser.getLoginId());
+        assertEquals("비밀번호", savedUser.getPassword());
     }
 
     @Test
     @DisplayName("회원 아이디 중복 테스트")
     void duplicationTest() {
         //given
-        User user1 = User.builder()
-                .nickname("닉네임")
-                .loginId("아이디")
-                .password("비밀번호")
-                .build();
+        SaveUserRequest request1 = new SaveUserRequest();
+        request1.setNickname("닉네임");
+        request1.setLoginId("아이디");
+        request1.setPassword("비밀번호");
 
-        User user2 = User.builder()
-                .nickname("닉네임")
-                .loginId("아이디")
-                .password("비밀번호")
-                .build();
+        SaveUserRequest request2 = new SaveUserRequest();
+        request2.setNickname("닉네임");
+        request2.setLoginId("아이디");
+        request2.setPassword("비밀번호");
 
-        userService.save(user1);
+        userService.save(request1);
 
         //expected
         assertThrows(DuplicationLoginIdException.class, () -> {
-            userService.save(user2);
+            userService.save(request2);
         });
     }
 
@@ -149,7 +149,7 @@ class UserServiceTest {
         boardRepository.saveAll(boards);
 
         //when
-        List<Board> userBoards = userService.getUserBoards(savedUser.getId());
+        List<UserBoardResponse> userBoards = userService.getUserBoards(savedUser.getId());
 
         //then
         assertEquals(userBoards.size(), 10);
