@@ -6,8 +6,10 @@ import com.spring.board.domain.User;
 import com.spring.board.exception.BoardNotFound;
 import com.spring.board.exception.CommentNotFound;
 import com.spring.board.exception.InvalidRequest;
+import com.spring.board.exception.UserNotFound;
 import com.spring.board.repository.BoardRepository;
 import com.spring.board.repository.CommentRepository;
+import com.spring.board.repository.UserRepository;
 import com.spring.board.request.comment.EditCommentRequest;
 import com.spring.board.request.comment.WriteCommentRequest;
 import com.spring.board.response.comment.EditCommentResponse;
@@ -23,15 +25,19 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final BoardRepository boardRepository;
+    private final UserRepository userRepository;
 
     public SaveCommentResponse writeComment(Long boardId, WriteCommentRequest request, User user) {
+        User findUser = userRepository.findById(user.getId())
+                .orElseThrow(UserNotFound::new);
+
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(BoardNotFound::new);
 
         Comment comment = Comment.builder()
                 .comment(request.getComment())
                 .board(board)
-                .user(user)
+                .user(findUser)
                 .build();
 
         Comment savedComment = commentRepository.save(comment);
@@ -45,7 +51,16 @@ public class CommentService {
     }
 
     public void deleteComment(Long boardId, Long commentId, User user) {
-        Comment comment = validateAndGetComment(boardId, commentId, user);
+        Comment comment = commentRepository.findComment(commentId)
+                .orElseThrow(CommentNotFound::new);
+
+        if (!comment.getBoard().getId().equals(boardId)) {
+            throw new BoardNotFound();
+        }
+
+        if (!comment.getUser().getId().equals(user.getId())) {
+            throw new InvalidRequest();
+        }
         commentRepository.delete(comment);
     }
 
@@ -59,7 +74,7 @@ public class CommentService {
         Long commentUserId = comment.getUser().getId();
         Long userId = user.getId();
 
-        if (commentUserId != userId) {
+        if (!commentUserId.equals(userId)) {
             throw new InvalidRequest();
         }
 
