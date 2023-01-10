@@ -10,12 +10,15 @@ import com.spring.board.repository.UserRepository;
 import com.spring.board.request.board.EditBoardRequest;
 import com.spring.board.request.board.WriteBoardRequest;
 import com.spring.board.response.board.*;
+import com.spring.board.response.comment.CommentDto;
+import com.spring.board.response.reply.ReplyDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 @Transactional
@@ -57,16 +60,28 @@ public class BoardService {
 
     public List<BoardsResponse> getBoards() {
         List<Board> boards = boardRepository.findAll();
-        return boards.stream()
-                .map(b -> new BoardsResponse(b.getUser().getNickname(), b.getId(), b.getTitle(), b.getContent()))
-                .collect(Collectors.toList());
+        return getBoardsResponses(boards);
     }
 
-    public List<BoardSearchResponse> findBySearch(String title) {
+    public List<BoardsResponse> findBySearch(String title) {
         List<Board> boards = boardRepository.findByTitleContaining(title);
+        return getBoardsResponses(boards);
+    }
+
+    private List<BoardsResponse> getBoardsResponses(List<Board> boards) {
         return boards.stream()
-                .map(b -> new BoardSearchResponse(b.getUser().getNickname(), b.getId(), b.getTitle(), b.getContent()))
-                .collect(Collectors.toList());
+                .map(b -> BoardsResponse.builder()
+                        .boardId(b.getId())
+                        .userNickname(b.getUser().getNickname())
+                        .title(b.getTitle())
+                        .content(b.getContent())
+                        .comments(b.getComments().stream()
+                                .map(c -> new CommentDto(c.getComment(), c.getReplies().stream()
+                                        .map(r -> new ReplyDto(r.getReply()))
+                                        .collect(toList())))
+                                .collect(toList()))
+                        .build())
+                .collect(toList());
     }
 
     public EditBoardResponse editBoard(Long boardId, EditBoardRequest request, User user) {
@@ -82,8 +97,6 @@ public class BoardService {
                 .title(board.getTitle())
                 .content(board.getContent())
                 .build();
-
-
     }
 
     public void deleteBoard(Long boardId, User user) {

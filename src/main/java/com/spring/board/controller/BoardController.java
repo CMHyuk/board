@@ -30,7 +30,7 @@ public class BoardController {
     }
 
     @GetMapping("/board/search")
-    public List<BoardSearchResponse> getBoardsBySearch(@RequestParam String title) {
+    public List<BoardsResponse> getBoardsBySearch(@RequestParam String title) {
         return boardService.findBySearch(title);
     }
 
