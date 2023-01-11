@@ -26,7 +26,6 @@ public class BoardController {
     @GetMapping("/boards")
     public List<BoardsResponse> getBoards() {
         return boardService.getBoards();
-
     }
 
     @GetMapping("/board/search")
