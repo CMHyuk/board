@@ -108,7 +108,7 @@ public class BoardService {
 
     private void validateSameUser(User user, Board findBoard) {
         User boardUser = findBoard.getUser();
-        if (user.getId() != boardUser.getId()) {
+        if (!user.getId().equals(boardUser.getId())) {
             throw new InvalidRequest();
         }
     }
