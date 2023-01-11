@@ -25,7 +25,6 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    //n + 1 터짐
     public List<UserBoardResponse> getUserBoards(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(UserNotFound::new);
@@ -78,7 +77,7 @@ public class UserService {
         User findUser = userRepository.findById(id)
                 .orElseThrow(UserNotFound::new);
 
-        if (findUser.getId() != user.getId()) {
+        if (!findUser.getId().equals(user.getId())) {
             throw new InvalidRequest();
         }
 
