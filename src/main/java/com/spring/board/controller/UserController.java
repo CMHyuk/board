@@ -29,6 +29,11 @@ public class UserController {
         return userService.getUserBoards(userId);
     }
 
+    @GetMapping("/user/{userId}/likeBoards")
+    public List<UserBoardResponse> getLikeBoards(@PathVariable Long userId) {
+        return userService.getLikeBoards(userId);
+    }
+
     @PostMapping("/user/save")
     public SaveUserResponse save(@RequestBody @Valid SaveUserRequest request) {
         return userService.save(request);
