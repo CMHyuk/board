@@ -2,8 +2,10 @@ package com.spring.board.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spring.board.domain.Board;
+import com.spring.board.domain.Like;
 import com.spring.board.domain.User;
 import com.spring.board.repository.BoardRepository;
+import com.spring.board.repository.LikeRepository;
 import com.spring.board.repository.UserRepository;
 import com.spring.board.request.user.EditUserRequest;
 import com.spring.board.request.user.SaveUserRequest;
@@ -39,6 +41,9 @@ class UserControllerTest {
     @Autowired
     BoardRepository boardRepository;
 
+    @Autowired
+    LikeRepository likeRepository;
+
     @Mock
     private MockHttpSession mockHttpSession;
 
@@ -52,6 +57,8 @@ class UserControllerTest {
     void setUp() {
         mockHttpSession = new MockHttpSession();
         userRepository.deleteAll();
+        boardRepository.deleteAll();
+        likeRepository.deleteAll();
     }
 
     @AfterEach
@@ -213,6 +220,45 @@ class UserControllerTest {
                         .session(mockHttpSession)
                         .content(json))
                 .andExpect(status().isUnauthorized())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("/user/{userId}/likeBoards 좋아요 누른 게시글 조회")
+    void getLikeBoards() throws Exception {
+        //given
+        User user = User.builder()
+                .nickname("닉네임")
+                .loginId("아이디")
+                .password("비밀번호")
+                .build();
+
+        User savedUser = userRepository.save(user);
+        mockHttpSession.setAttribute(LOGIN_USER, savedUser);
+
+        Board board = Board.builder()
+                .title("제목")
+                .content("내용")
+                .user(savedUser)
+                .build();
+
+        Board savedBoard = boardRepository.save(board);
+
+        Like like = Like.builder()
+                .board(savedBoard)
+                .user(savedUser)
+                .build();
+
+        likeRepository.save(like);
+
+        //expected
+        mockMvc.perform(get("/user/{userId}/likeBoards", savedUser.getId())
+                        .contentType(APPLICATION_JSON)
+                        .session(mockHttpSession))
+                .andExpect(jsonPath("$.[0].boardId").value(savedBoard.getId()))
+                .andExpect(jsonPath("$.[0].title").value("제목"))
+                .andExpect(jsonPath("$.[0].content").value("내용"))
+                .andExpect(status().isOk())
                 .andDo(print());
     }
 }
