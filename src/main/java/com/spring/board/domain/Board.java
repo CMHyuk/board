@@ -50,6 +50,9 @@ public class Board {
     @OneToMany(mappedBy = "board", cascade = ALL)
     private List<Reply> replies = new ArrayList<>();
 
+    @OneToMany(mappedBy = "board", cascade = ALL)
+    private List<Like> likes = new ArrayList<>();
+
     @Builder
     public Board(String title, String content, User user) {
         this.title = title;

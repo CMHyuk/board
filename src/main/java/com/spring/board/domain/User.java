@@ -37,6 +37,9 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = ALL)
     private List<Reply> replies = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", cascade = ALL)
+    private List<Like> likes = new ArrayList<>();
+
     @Builder
     public User(String nickname, String loginId, String password) {
         this.nickname = nickname;
