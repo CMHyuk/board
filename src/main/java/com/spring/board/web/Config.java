@@ -16,7 +16,7 @@ public class Config implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new LoginCheckInterceptor())
                 .order(1)
-                .addPathPatterns("/user/edit/{userId}", "/user/delete/{userId}",
+                .addPathPatterns("/user/edit/{userId}", "/user/delete/{userId}", "/user/{userId}/likeBoards",
                         "/board/write", "/board/edit/{boardId}", "/board/delete/{boardId}",
                         "/board/{boardId}/comment", "/board/{boardId}/editComment/{commentId}",
                         "/board/{boardId}/deleteComment/{commentId}", "/board/{boardId}/{commentId}/reply",
