@@ -1,10 +1,12 @@
 package com.spring.board.service;
 
 import com.spring.board.domain.Board;
+import com.spring.board.domain.Like;
 import com.spring.board.domain.User;
 import com.spring.board.exception.DuplicationLoginIdException;
 import com.spring.board.exception.InvalidRequest;
 import com.spring.board.exception.UserNotFound;
+import com.spring.board.repository.LikeRepository;
 import com.spring.board.repository.UserRepository;
 import com.spring.board.request.user.EditUserRequest;
 import com.spring.board.request.user.SaveUserRequest;
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final LikeRepository likeRepository;
 
     public List<UserBoardResponse> getUserBoards(Long id) {
         User user = userRepository.findById(id)
@@ -33,6 +36,13 @@ public class UserService {
 
         return boards.stream()
                 .map(u -> new UserBoardResponse(u.getId(), u.getTitle(), u.getContent()))
+                .collect(Collectors.toList());
+    }
+
+    public List<UserBoardResponse> getLikeBoards(Long userId) {
+        List<Like> boards = likeRepository.findByUserId(userId);
+        return boards.stream()
+                .map(l -> new UserBoardResponse(l.getBoard().getId(), l.getBoard().getTitle(), l.getBoard().getContent()))
                 .collect(Collectors.toList());
     }
 
