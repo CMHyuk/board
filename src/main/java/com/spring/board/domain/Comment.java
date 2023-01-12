@@ -26,6 +26,7 @@ public class Comment {
 
     @Id
     @GeneratedValue
+    @Column(name = "comment_id")
     private Long id;
 
     private String comment;
