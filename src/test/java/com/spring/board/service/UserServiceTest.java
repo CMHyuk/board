@@ -1,9 +1,11 @@
 package com.spring.board.service;
 
 import com.spring.board.domain.Board;
+import com.spring.board.domain.Like;
 import com.spring.board.domain.User;
 import com.spring.board.exception.DuplicationLoginIdException;
 import com.spring.board.repository.BoardRepository;
+import com.spring.board.repository.LikeRepository;
 import com.spring.board.repository.UserRepository;
 import com.spring.board.request.user.EditUserRequest;
 import com.spring.board.request.user.SaveUserRequest;
@@ -34,6 +36,9 @@ class UserServiceTest {
 
     @Autowired
     BoardRepository boardRepository;
+
+    @Autowired
+    LikeRepository likeRepository;
 
     @BeforeEach
     void clean() {
@@ -144,8 +149,6 @@ class UserServiceTest {
                         .build())
                 .collect(Collectors.toList());
 
-        savedUser.setBoards(boards);
-
         boardRepository.saveAll(boards);
 
         //when
@@ -153,5 +156,40 @@ class UserServiceTest {
 
         //then
         assertEquals(userBoards.size(), 10);
+    }
+
+    @Test
+    @DisplayName("좋아요 누른 게시글 조회")
+    void getLikeBoards() {
+        //given
+        User user = User.builder()
+                .nickname("닉네임")
+                .loginId("아이디")
+                .password("비밀번호")
+                .build();
+
+        User savedUser = userRepository.save(user);
+
+        Board board = Board.builder()
+                .title("제목")
+                .content("내용")
+                .user(savedUser)
+                .build();
+
+        Board savedBoard = boardRepository.save(board);
+
+        Like like = Like.builder()
+                .board(savedBoard)
+                .user(savedUser)
+                .build();
+
+        likeRepository.save(like);
+
+        //when
+        List<UserBoardResponse> response = userService.getLikeBoards(savedUser.getId());
+
+        //then
+        assertEquals(response.get(0).getTitle(), "제목");
+        assertEquals(response.get(0).getContent(), "내용");
     }
 }
