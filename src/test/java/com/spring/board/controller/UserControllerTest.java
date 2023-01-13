@@ -21,6 +21,7 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -244,9 +245,12 @@ class UserControllerTest {
 
         Board savedBoard = boardRepository.save(board);
 
+        Optional<Like> findLike = likeRepository.findByBoardIdAndUser(board.getId(), user);
+
         Like like = Like.builder()
                 .board(savedBoard)
                 .user(savedUser)
+                .like(findLike)
                 .build();
 
         likeRepository.save(like);
