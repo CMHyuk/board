@@ -1,4 +1,6 @@
-package com.spring.board.exception;
+package com.spring.board.exception.comment;
+
+import com.spring.board.exception.Exception;
 
 public class CommentNotFound extends Exception {
 

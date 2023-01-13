@@ -1,4 +1,6 @@
-package com.spring.board.exception;
+package com.spring.board.exception.board;
+
+import com.spring.board.exception.Exception;
 
 public class BoardNotFound extends Exception {
 
