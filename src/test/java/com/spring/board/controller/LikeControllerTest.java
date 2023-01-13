@@ -17,6 +17,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Optional;
+
 import static com.spring.board.Const.LOGIN_USER;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -96,9 +98,12 @@ class LikeControllerTest {
     @DisplayName("/board/{boardId}/cancelLike")
     void cancelLikeTest() throws Exception {
         //given
+        Optional<Like> findLike = likeRepository.findByBoardIdAndUser(board.getId(), user);
+
         Like like = Like.builder()
-                .user(user)
                 .board(board)
+                .user(user)
+                .like(findLike)
                 .build();
 
         likeRepository.save(like);

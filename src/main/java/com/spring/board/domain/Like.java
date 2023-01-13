@@ -1,5 +1,6 @@
 package com.spring.board.domain;
 
+import com.spring.board.exception.like.DuplicationLikeException;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,7 +8,8 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
-import static javax.persistence.CascadeType.*;
+import java.util.Optional;
+
 import static javax.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
@@ -32,7 +34,10 @@ public class Like {
     private Board board;
 
     @Builder
-    public Like(User user, Board board) {
+    public Like(User user, Board board, Optional<Like> like) {
+        if (!like.isEmpty()) {
+            throw new DuplicationLikeException();
+        }
         this.user = user;
         this.board = board;
         user.getLikes().add(this);
