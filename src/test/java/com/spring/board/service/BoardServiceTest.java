@@ -2,7 +2,7 @@ package com.spring.board.service;
 
 import com.spring.board.domain.Board;
 import com.spring.board.domain.User;
-import com.spring.board.exception.BoardNotFound;
+import com.spring.board.exception.board.BoardNotFound;
 import com.spring.board.exception.InvalidRequest;
 import com.spring.board.repository.BoardRepository;
 import com.spring.board.repository.UserRepository;

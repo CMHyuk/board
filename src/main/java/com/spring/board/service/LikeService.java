@@ -3,9 +3,9 @@ package com.spring.board.service;
 import com.spring.board.domain.Board;
 import com.spring.board.domain.Like;
 import com.spring.board.domain.User;
-import com.spring.board.exception.BoardNotFound;
-import com.spring.board.exception.LikeNotFound;
-import com.spring.board.exception.UserNotFound;
+import com.spring.board.exception.board.BoardNotFound;
+import com.spring.board.exception.like.LikeNotFound;
+import com.spring.board.exception.user.UserNotFound;
 import com.spring.board.repository.BoardRepository;
 import com.spring.board.repository.LikeRepository;
 import com.spring.board.repository.UserRepository;
@@ -34,13 +34,13 @@ public class LikeService {
 
         Optional<Like> findLike = likeRepository.findByBoardIdAndUser(boardId, findUser);
 
-        if (findLike.isEmpty()) {
-            Like like = Like.builder()
-                    .board(board)
-                    .user(findUser)
-                    .build();
-            likeRepository.save(like);
-        }
+        Like like = Like.builder()
+                .board(board)
+                .user(findUser)
+                .like(findLike)
+                .build();
+
+        likeRepository.save(like);
 
         return LikeResponse.builder()
                 .userNickname(findUser.getNickname())

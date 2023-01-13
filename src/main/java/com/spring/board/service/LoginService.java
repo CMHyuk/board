@@ -1,7 +1,7 @@
 package com.spring.board.service;
 
 import com.spring.board.domain.User;
-import com.spring.board.exception.UserNotFound;
+import com.spring.board.exception.user.UserNotFound;
 import com.spring.board.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
