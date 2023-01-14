@@ -101,7 +101,7 @@ class BoardControllerTest {
 
         User savedUser = userRepository.save(user);
 
-        List<Board> boards = IntStream.range(0, 10).mapToObj(i -> Board.builder()
+        List<Board> boards = IntStream.range(0, 20).mapToObj(i -> Board.builder()
                         .title("제목" + i)
                         .content("내용" + i)
                         .user(savedUser)
@@ -110,11 +110,13 @@ class BoardControllerTest {
 
         boardRepository.saveAll(boards);
 
-        mockMvc.perform(get("/boards")
+        //expected
+        mockMvc.perform(get("/boards?page=1&sort=id,desc")
                         .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()", is(10)))
-                .andExpect(jsonPath("$[0].title").value("제목0"))
+                .andExpect(jsonPath("$[0].title").value("제목19"))
+                .andExpect(jsonPath("$[9].title").value("제목10"))
                 .andDo(print());
     }
 
@@ -130,7 +132,7 @@ class BoardControllerTest {
 
         User savedUser = userRepository.save(user);
 
-        List<Board> boards = IntStream.range(0, 10).mapToObj(i -> Board.builder()
+        List<Board> boards = IntStream.range(0, 20).mapToObj(i -> Board.builder()
                         .title("제목" + i)
                         .content("내용" + i)
                         .user(savedUser)
@@ -140,14 +142,14 @@ class BoardControllerTest {
         boardRepository.saveAll(boards);
 
         MultiValueMap<String, String> info = new LinkedMultiValueMap<>();
-        info.add("title", "1");
+        info.add("title", "제목");
 
         //expected
-        mockMvc.perform(get("/board/search")
+        mockMvc.perform(get("/board/search?page=1&sort=id,desc")
                         .contentType(APPLICATION_JSON)
                         .params(info))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].title").value("제목1"))
+                .andExpect(jsonPath("$[0].title").value("제목19"))
                 .andDo(print());
     }
 
