@@ -7,6 +7,8 @@ import com.spring.board.response.board.*;
 import com.spring.board.service.BoardService;
 import com.spring.board.web.argumentresolver.Login;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -24,13 +26,13 @@ public class BoardController {
     }
 
     @GetMapping("/boards")
-    public List<BoardsResponse> getBoards() {
-        return boardService.getBoards();
+    public List<BoardsResponse> getBoards(@PageableDefault Pageable pageable) {
+        return boardService.getBoards(pageable);
     }
 
     @GetMapping("/board/search")
-    public List<BoardsResponse> getBoardsBySearch(@RequestParam String title) {
-        return boardService.findBySearch(title);
+    public List<BoardsResponse> getBoardsBySearch(@RequestParam String title, @PageableDefault Pageable pageable) {
+        return boardService.findBySearch(title, pageable);
     }
 
     @PostMapping("/board/write")
