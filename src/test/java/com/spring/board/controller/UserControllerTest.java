@@ -213,7 +213,7 @@ class UserControllerTest {
         String json = objectMapper.writeValueAsString(request);
 
         //expected
-        mockMvc.perform(patch("/user/edit/{userId}", 100L)
+        mockMvc.perform(patch("/user/edit/{userId}", 0L)
                         .contentType(APPLICATION_JSON)
                         .session(mockHttpSession)
                         .content(json))

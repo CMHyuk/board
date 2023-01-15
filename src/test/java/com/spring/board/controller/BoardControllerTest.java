@@ -10,14 +10,19 @@ import com.spring.board.request.board.WriteBoardRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpSession;
+import org.springframework.restdocs.RestDocumentationContextProvider;
+import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.filter.CharacterEncodingFilter;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,13 +31,19 @@ import java.util.stream.IntStream;
 import static com.spring.board.Const.LOGIN_USER;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@ExtendWith(RestDocumentationExtension.class)
 class BoardControllerTest {
 
     @Autowired
@@ -44,14 +55,21 @@ class BoardControllerTest {
     @Mock
     MockHttpSession mockHttpSession;
 
-    @Autowired
     private MockMvc mockMvc;
 
     @Autowired
     private ObjectMapper objectMapper;
 
     @BeforeEach
-    void clean() {
+    void setUp(WebApplicationContext webApplicationContext,
+               RestDocumentationContextProvider restDocumentation) {
+
+        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
+                .apply(documentationConfiguration(restDocumentation))
+                .alwaysDo(print())
+                .addFilters(new CharacterEncodingFilter("UTF-8", true))
+                .build();
+
         mockHttpSession = new MockHttpSession();
         userRepository.deleteAll();
         boardRepository.deleteAll();
@@ -77,7 +95,6 @@ class BoardControllerTest {
 
         boardRepository.save(board);
 
-
         //expected
         mockMvc.perform(get("/board/{boardId}", board.getId())
                         .contentType(APPLICATION_JSON))
@@ -86,7 +103,7 @@ class BoardControllerTest {
                 .andExpect(jsonPath("$.title").value("제목"))
                 .andExpect(jsonPath("$.content").value("내용"))
                 .andExpect(status().isOk())
-                .andDo(print());
+                .andDo(document("board-get"));
     }
 
     @Test
@@ -117,7 +134,7 @@ class BoardControllerTest {
                 .andExpect(jsonPath("$.length()", is(10)))
                 .andExpect(jsonPath("$[0].title").value("제목19"))
                 .andExpect(jsonPath("$[9].title").value("제목10"))
-                .andDo(print());
+                .andDo(document("board-getAll"));
     }
 
     @Test
@@ -150,7 +167,12 @@ class BoardControllerTest {
                         .params(info))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].title").value("제목19"))
-                .andDo(print());
+                .andDo(document("board-search",
+                        requestParameters(
+                                parameterWithName("title").description("검색 제목"),
+                                parameterWithName("page").description(1),
+                                parameterWithName("sort").description("id,desc")
+                        )));
     }
 
     @Test
@@ -179,7 +201,11 @@ class BoardControllerTest {
                         .content(json)
                         .session(mockHttpSession))
                 .andExpect(status().isOk())
-                .andDo(print());
+                .andDo(document("board-save",
+                        requestFields(
+                                fieldWithPath("title").description("제목"),
+                                fieldWithPath("content").description("내용")
+                        )));
     }
 
     @Test
@@ -197,7 +223,7 @@ class BoardControllerTest {
                         .content(json)
                         .session(mockHttpSession))
                 .andExpect(status().isUnauthorized())
-                .andDo(print());
+                .andDo(document("board-unauthorized"));
     }
 
     @Test
@@ -236,7 +262,11 @@ class BoardControllerTest {
                 .andExpect(jsonPath("$.title").value("제목수정"))
                 .andExpect(jsonPath("$.content").value("내용수정"))
                 .andExpect(status().isOk())
-                .andDo(print());
+                .andDo(document("board-edit",
+                        requestFields(
+                                fieldWithPath("title").description("제목수정"),
+                                fieldWithPath("content").description("내용수정")
+                        )));
     }
 
     @Test
@@ -264,7 +294,7 @@ class BoardControllerTest {
                         .session(mockHttpSession)
                         .content(json))
                 .andExpect(status().isNotFound())
-                .andDo(print());
+                .andDo(document("board-notFound"));
     }
 
     @Test
@@ -281,8 +311,7 @@ class BoardControllerTest {
                         .contentType(APPLICATION_JSON)
                         .session(mockHttpSession)
                         .content(json))
-                .andExpect(status().isUnauthorized())
-                .andDo(print());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -312,7 +341,7 @@ class BoardControllerTest {
                         .contentType(APPLICATION_JSON)
                         .session(mockHttpSession))
                 .andExpect(status().isOk())
-                .andDo(print());
+                .andDo(document("board-delete"));
     }
 
     @Test
@@ -333,8 +362,7 @@ class BoardControllerTest {
         mockMvc.perform(delete("/board/delete/{boardId}", 100L)
                         .contentType(APPLICATION_JSON)
                         .session(mockHttpSession))
-                .andExpect(status().isNotFound())
-                .andDo(print());
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -344,7 +372,6 @@ class BoardControllerTest {
         mockMvc.perform(delete("/board/delete/{boardId}", 100L)
                         .contentType(APPLICATION_JSON)
                         .session(mockHttpSession))
-                .andExpect(status().isUnauthorized())
-                .andDo(print());
+                .andExpect(status().isUnauthorized());
     }
 }
