@@ -13,12 +13,17 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpSession;
+import org.springframework.restdocs.RestDocumentationContextProvider;
+import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.filter.CharacterEncodingFilter;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,13 +32,17 @@ import java.util.stream.IntStream;
 
 import static com.spring.board.Const.LOGIN_USER;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@ExtendWith(RestDocumentationExtension.class)
 class UserControllerTest {
 
     @Autowired
@@ -48,14 +57,21 @@ class UserControllerTest {
     @Mock
     private MockHttpSession mockHttpSession;
 
-    @Autowired
     private MockMvc mockMvc;
 
     @Autowired
     private ObjectMapper objectMapper;
 
     @BeforeEach
-    void setUp() {
+    void setUp(WebApplicationContext webApplicationContext,
+               RestDocumentationContextProvider restDocumentation) {
+
+        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
+                .apply(documentationConfiguration(restDocumentation))
+                .alwaysDo(print())
+                .addFilters(new CharacterEncodingFilter("UTF-8", true))
+                .build();
+
         mockHttpSession = new MockHttpSession();
         userRepository.deleteAll();
         boardRepository.deleteAll();
@@ -86,7 +102,12 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.loginId").value("아이디"))
                 .andExpect(jsonPath("$.password").value("비밀번호"))
                 .andExpect(status().isOk())
-                .andDo(print());
+                .andDo(document("user-save",
+                        requestFields(
+                                fieldWithPath("nickname").description("닉네임"),
+                                fieldWithPath("loginId").description("아이디"),
+                                fieldWithPath("password").description("비밀번호")
+                        )));
     }
 
     @Test
@@ -113,7 +134,7 @@ class UserControllerTest {
                         .contentType(APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isConflict())
-                .andDo(print());
+                .andDo(document("user-duplication"));
     }
 
     @Test
@@ -142,7 +163,7 @@ class UserControllerTest {
                         .contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.length()").value(10))
                 .andExpect(status().isOk())
-                .andDo(print());
+                .andDo(document("user-get"));
     }
 
     @Test
@@ -170,7 +191,8 @@ class UserControllerTest {
                         .content(json))
                 .andExpect(jsonPath("$.password").value("새로운비밀번호"))
                 .andExpect(status().isOk())
-                .andDo(print());
+                .andDo(document("user-edit",
+                        requestFields(fieldWithPath("password").description("새로운비밀번호"))));
     }
 
     @Test
@@ -196,7 +218,7 @@ class UserControllerTest {
                         .session(mockHttpSession)
                         .content(json))
                 .andExpect(status().isNotFound())
-                .andDo(print());
+                .andDo(document("user-fail-edit"));
     }
 
     @Test
@@ -221,7 +243,48 @@ class UserControllerTest {
                         .session(mockHttpSession)
                         .content(json))
                 .andExpect(status().isUnauthorized())
-                .andDo(print());
+                .andDo(document("user-edit-unauthorized"));
+    }
+
+    @Test
+    @DisplayName("/user/delete/{userId}")
+    void deleteTest() throws Exception {
+        //given
+        User user = User.builder()
+                .nickname("닉네임")
+                .loginId("아이디")
+                .password("비밀번호")
+                .build();
+
+        userRepository.save(user);
+        mockHttpSession.setAttribute(LOGIN_USER, user);
+
+        //expected
+        mockMvc.perform(delete("/user/delete/{userId}", user.getId())
+                .contentType(APPLICATION_JSON)
+                .session(mockHttpSession))
+                .andExpect(status().isOk())
+                .andDo(document("user-delete"));
+    }
+
+    @Test
+    @DisplayName("/user/delete/{userId} 미인증 사용자 삭제 테스트")
+    void unauthorizedDeleteTest() throws Exception {
+        //given
+        User user = User.builder()
+                .nickname("닉네임")
+                .loginId("아이디")
+                .password("비밀번호")
+                .build();
+
+        userRepository.save(user);
+
+        //expected
+        mockMvc.perform(delete("/user/delete/{userId}", user.getId())
+                        .contentType(APPLICATION_JSON)
+                        .session(mockHttpSession))
+                .andExpect(status().isUnauthorized())
+                .andDo(document("user-delete-unauthorized"));
     }
 
     @Test
@@ -263,6 +326,6 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.[0].title").value("제목"))
                 .andExpect(jsonPath("$.[0].content").value("내용"))
                 .andExpect(status().isOk())
-                .andDo(print());
+                .andDo(document("user-likeBoard"));
     }
 }
