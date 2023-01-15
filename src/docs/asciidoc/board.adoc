@@ -1,0 +1,117 @@
+# 게시글 API
+:toc: left
+
+## 게시글 등록
+
+## 요청 필드
+
+include::{snippets}/board-save/request-fields.adoc[]
+
+### 요청
+
+include::{snippets}/board-save/http-request.adoc[]
+
+### 응답
+
+include::{snippets}/board-save/http-response.adoc[]
+
+### CURL
+
+include::{snippets}/board-save/curl-request.adoc[]
+
+## 게시글 수정
+
+## 요청 필드
+
+include::{snippets}/board-edit/request-fields.adoc[]
+
+### 요청
+
+include::{snippets}/board-edit/http-request.adoc[]
+
+### 응답
+
+include::{snippets}/board-edit/http-response.adoc[]
+
+### CURL
+
+include::{snippets}/board-edit/curl-request.adoc[]
+
+## 게시글 삭제
+
+### 요청
+
+include::{snippets}/board-delete/http-request.adoc[]
+
+### 응답
+
+include::{snippets}/board-delete/http-response.adoc[]
+
+### CURL
+
+include::{snippets}/board-delete/curl-request.adoc[]
+
+## 모든 게시글 조회
+
+### 요청
+
+include::{snippets}/board-getAll/http-request.adoc[]
+
+### 응답
+
+include::{snippets}/board-getAll/http-response.adoc[]
+
+### CURL
+
+include::{snippets}/board-getAll/curl-request.adoc[]
+
+### error
+
+## 자신이 작성한 게시글 조회
+
+### 요청
+
+include::{snippets}/user-get/http-request.adoc[]
+
+### 응답
+
+include::{snippets}/user-get/http-response.adoc[]
+
+### CURL
+
+include::{snippets}/user-get/curl-request.adoc[]
+
+## 단건 조회
+
+### 요청
+
+include::{snippets}/board-get/http-request.adoc[]
+
+### 응답
+
+include::{snippets}/board-get/http-response.adoc[]
+
+### CURL
+
+include::{snippets}/board-get/curl-request.adoc[]
+
+## 좋아요 누른 게시글 조회
+
+### 요청
+
+include::{snippets}/user-likeBoard/http-request.adoc[]
+
+### 응답
+
+include::{snippets}/user-likeBoard/http-response.adoc[]
+
+### CURl
+
+include::{snippets}/user-likeBoard/curl-request.adoc[]
+
+## ERROR
+
+include::{snippets}/board-notFound/http-response.adoc[]
+
+include::{snippets}/user-edit-unauthorized/http-response.adoc[]
+
