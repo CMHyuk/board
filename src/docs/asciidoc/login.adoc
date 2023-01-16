@@ -1,0 +1,22 @@
+# LOGIN API
+:toc: left
+
+## 로그인
+### 요청필드
+include::{snippets}/login/request-fields.adoc[]
+
+### 요청
+
+include::{snippets}/login/http-request.adoc[]
+
+### 응답
+
+include::{snippets}/login/http-response.adoc[]
+
+### CURL
+
+include::{snippets}/login/curl-request.adoc[]
+
+## ERROR
+
+include::{snippets}/login-fail/http-response.adoc[]

@@ -1,0 +1,58 @@
+# REPLY API
+:toc: left
+
+## 대댓글 작성
+
+### 요청 필드
+
+include::{snippets}/reply-write/request-fields.adoc[]
+
+### 요청
+
+include::{snippets}/reply-write/http-request.adoc[]
+
+### 응답
+
+include::{snippets}/reply-write/http-response.adoc[]
+
+### CURL
+
+include::{snippets}/reply-write/curl-request.adoc[]
+
+## 대댓글 수정
+
+### 요청 필드
+
+include::{snippets}/reply-edit/request-fields.adoc[]
+
+### 요청
+
+include::{snippets}/reply-edit/http-request.adoc[]
+
+### 응답
+
+include::{snippets}/reply-edit/http-response.adoc[]
+
+### CURL
+
+include::{snippets}/reply-edit/curl-request.adoc[]
+
+## 대댓글 삭제
+
+### 요청
+
+include::{snippets}/reply-delete/http-request.adoc[]
+
+### 응답
+
+include::{snippets}/reply-delete/http-response.adoc[]
+
+### CURL
+
+include::{snippets}/reply-delete/curl-request.adoc[]
+
+## ERROR
+
+include::{snippets}/reply-notFound/http-response.adoc[]
+
+include::{snippets}/reply-unauthorized/http-response.adoc[]

@@ -1,0 +1,57 @@
+# COMMENT API
+:toc: left
+
+## 댓글 작성
+### 요청 필드
+include::{snippets}/comment-write/request-fields.adoc[]
+
+### 요청
+
+include::{snippets}/comment-write/http-request.adoc[]
+
+### 응답
+
+include::{snippets}/comment-write/http-response.adoc[]
+
+### CURL
+
+include::{snippets}/comment-write/curl-request.adoc[]
+
+## 댓글 수정
+### 요청 필드
+
+include::{snippets}/comment-edit/request-fields.adoc[]
+
+### 요청
+
+include::{snippets}/comment-edit/http-request.adoc[]
+
+### 응답
+
+include::{snippets}/comment-edit/http-response.adoc[]
+
+### CURL
+
+include::{snippets}/comment-edit/curl-request.adoc[]
+
+## 댓글 삭제
+
+### 요청
+
+include::{snippets}/comment-delete/http-request.adoc[]
+
+### 응답
+
+include::{snippets}/comment-delete/http-response.adoc[]
+
+### CURL
+
+include::{snippets}/comment-delete/curl-request.adoc[]
+
+## ERROR
+
+include::{snippets}/comment-unauthorized/http-response.adoc[]
+
+include::{snippets}/comment-boardNotFound/http-response.adoc[]
+
+include::{snippets}/comment-notFound/http-response.adoc[]
