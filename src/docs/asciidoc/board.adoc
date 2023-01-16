@@ -3,7 +3,7 @@
 
 ## 게시글 등록
 
-## 요청 필드
+### 요청 필드
 
 include::{snippets}/board-save/request-fields.adoc[]
 
@@ -21,7 +21,7 @@ include::{snippets}/board-save/curl-request.adoc[]
 
 ## 게시글 수정
 
-## 요청 필드
+### 요청 필드
 
 include::{snippets}/board-edit/request-fields.adoc[]
 
@@ -109,9 +109,59 @@ include::{snippets}/user-likeBoard/http-response.adoc[]
 
 include::{snippets}/user-likeBoard/curl-request.adoc[]
 
+## 좋아요
+
+### 요청
+
+include::{snippets}/board-like/http-request.adoc[]
+
+### 응답
+
+include::{snippets}/board-like/http-response.adoc[]
+
+### CURL
+
+include::{snippets}/board-like/curl-request.adoc[]
+
+## 좋아요 취소
+
+### 요청
+
+include::{snippets}/board-cancelLike/http-request.adoc[]
+
+### 응답
+
+include::{snippets}/board-cancelLike/http-response.adoc[]
+
+### CURL
+
+include::{snippets}/board-cancelLike/curl-request.adoc[]
+
+## 게시글 신고
+
+### 요청 필드
+
+include::{snippets}/board-report/request-fields.adoc[]
+
+### 요청
+
+include::{snippets}/board-report/http-request.adoc[]
+
+### 응답
+
+include::{snippets}/board-report/http-response.adoc[]
+
+### CURL
+
+include::{snippets}/board-report/curl-request.adoc[]
+
 ## ERROR
 
 include::{snippets}/board-notFound/http-response.adoc[]
 
 include::{snippets}/user-edit-unauthorized/http-response.adoc[]
+
+include::{snippets}/board-reportDuplication/http-response.adoc[]
+
+include::{snippets}/board-badRequest/http-response.adoc[]
 

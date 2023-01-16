@@ -2,7 +2,8 @@
 :toc: left
 
 ## 회원 가입
-## 요청 필드
+
+### 요청 필드
 
 include::{snippets}/user-save/request-fields.adoc[]
 
@@ -20,7 +21,7 @@ include::{snippets}/user-save/curl-request.adoc[]
 
 ## 회원 수정
 
-## 요청 필드
+### 요청 필드
 
 include::{snippets}/user-edit/request-fields.adoc[]
 
