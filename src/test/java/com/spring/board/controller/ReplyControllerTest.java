@@ -11,20 +11,28 @@ import com.spring.board.repository.ReplyRepository;
 import com.spring.board.repository.UserRepository;
 import com.spring.board.request.reply.EditReplyRequest;
 import com.spring.board.request.reply.WriteReplyRequest;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpSession;
+import org.springframework.restdocs.RestDocumentationContextProvider;
+import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.filter.CharacterEncodingFilter;
 
 import static com.spring.board.Const.LOGIN_USER;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -32,7 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Transactional
 @SpringBootTest
-@AutoConfigureMockMvc
+@ExtendWith(RestDocumentationExtension.class)
 class ReplyControllerTest {
 
     @Autowired
@@ -47,8 +55,7 @@ class ReplyControllerTest {
     @Autowired
     ReplyRepository replyRepository;
 
-    @Autowired
-    MockMvc mockMvc;
+    private MockMvc mockMvc;
 
     @Autowired
     ObjectMapper objectMapper;
@@ -61,7 +68,15 @@ class ReplyControllerTest {
     private Comment comment;
 
     @BeforeEach
-    void set() {
+    void setUp(WebApplicationContext webApplicationContext,
+               RestDocumentationContextProvider restDocumentation) {
+
+        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
+                .apply(documentationConfiguration(restDocumentation))
+                .alwaysDo(print())
+                .addFilters(new CharacterEncodingFilter("UTF-8", true))
+                .build();
+
         userRepository.deleteAll();
         boardRepository.deleteAll();
         commentRepository.deleteAll();
@@ -110,7 +125,10 @@ class ReplyControllerTest {
                 .andExpect(jsonPath("$.nickname").value("닉네임"))
                 .andExpect(jsonPath("$.reply").value("대댓글"))
                 .andExpect(status().isOk())
-                .andDo(print());
+                .andDo(document("reply-write",
+                        requestFields(
+                                fieldWithPath("reply").description("대댓글")
+                        )));
     }
 
     @Test
@@ -129,7 +147,7 @@ class ReplyControllerTest {
                         .session(mockHttpSession)
                         .content(json))
                 .andExpect(status().isNotFound())
-                .andDo(print());
+                .andDo(document("reply-notFound"));
     }
 
     @Test
@@ -146,7 +164,7 @@ class ReplyControllerTest {
                         .contentType(APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isUnauthorized())
-                .andDo(print());
+                .andDo(document("reply-unauthorized"));
     }
 
     @Test
@@ -177,7 +195,10 @@ class ReplyControllerTest {
                 .andExpect(jsonPath("$.nickname").value("닉네임"))
                 .andExpect(jsonPath("$.reply").value("대댓글수정"))
                 .andExpect(status().isOk())
-                .andDo(print());
+                .andDo(document("reply-edit",
+                        requestFields(
+                                fieldWithPath("reply").description("대댓글 수정")
+                        )));
     }
 
     @Test
@@ -256,7 +277,7 @@ class ReplyControllerTest {
                         .contentType(APPLICATION_JSON)
                         .session(mockHttpSession))
                 .andExpect(status().isOk())
-                .andDo(print());
+                .andDo(document("reply-delete"));
     }
 
     @Test

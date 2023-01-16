@@ -12,23 +12,32 @@ import com.spring.board.request.comment.WriteCommentRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpSession;
+import org.springframework.restdocs.RestDocumentationContextProvider;
+import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.filter.CharacterEncodingFilter;
 
 import static com.spring.board.Const.LOGIN_USER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@ExtendWith(RestDocumentationExtension.class)
 class CommentControllerTest {
 
     @Autowired
@@ -40,8 +49,7 @@ class CommentControllerTest {
     @Autowired
     CommentRepository commentRepository;
 
-    @Autowired
-    MockMvc mockMvc;
+    private MockMvc mockMvc;
 
     @Autowired
     ObjectMapper objectMapper;
@@ -53,7 +61,15 @@ class CommentControllerTest {
     private Board board;
 
     @BeforeEach
-    void set() {
+    void setUp(WebApplicationContext webApplicationContext,
+               RestDocumentationContextProvider restDocumentation) {
+
+        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
+                .apply(documentationConfiguration(restDocumentation))
+                .alwaysDo(print())
+                .addFilters(new CharacterEncodingFilter("UTF-8", true))
+                .build();
+
         userRepository.deleteAll();
         boardRepository.deleteAll();
         commentRepository.deleteAll();
@@ -93,7 +109,10 @@ class CommentControllerTest {
                 .andExpect(jsonPath("$.comment").value("댓글"))
                 .andExpect(jsonPath("$.nickname").value("닉네임"))
                 .andExpect(status().isOk())
-                .andDo(print());
+                .andDo(document("comment-write",
+                        requestFields(
+                                fieldWithPath("comment").description("댓글")
+                        )));
     }
 
     @Test
@@ -113,7 +132,7 @@ class CommentControllerTest {
                         .contentType(APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isUnauthorized())
-                .andDo(print());
+                .andDo(document("comment-unauthorized"));
     }
 
     @Test
@@ -134,7 +153,7 @@ class CommentControllerTest {
                         .session(mockHttpSession)
                         .content(json))
                 .andExpect(status().isNotFound())
-                .andDo(print());
+                .andDo(document("comment-boardNotFound"));
     }
 
     @Test
@@ -165,7 +184,10 @@ class CommentControllerTest {
                         .content(json))
                 .andExpect(jsonPath("$.comment").value("댓글수정"))
                 .andExpect(status().isOk())
-                .andDo(print());
+                .andDo(document("comment-edit",
+                        requestFields(
+                                fieldWithPath("comment").description("댓글 수정")
+                        )));
     }
 
     @Test
@@ -253,7 +275,10 @@ class CommentControllerTest {
                         .session(mockHttpSession)
                         .content(json))
                 .andExpect(status().isNotFound())
-                .andDo(print());
+                .andDo(document("comment-notFound",
+                        requestFields(
+                                fieldWithPath("comment").description("댓글 수정")
+                        )));
     }
 
     @Test
@@ -277,7 +302,7 @@ class CommentControllerTest {
                         .contentType(APPLICATION_JSON)
                         .session(mockHttpSession))
                 .andExpect(status().isOk())
-                .andDo(print());
+                .andDo(document("comment-delete"));
 
         //then
         assertEquals(commentRepository.count(), 0);

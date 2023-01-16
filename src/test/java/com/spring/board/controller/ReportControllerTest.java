@@ -10,22 +10,31 @@ import com.spring.board.request.ReportRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpSession;
+import org.springframework.restdocs.RestDocumentationContextProvider;
+import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.filter.CharacterEncodingFilter;
 
 import static com.spring.board.Const.LOGIN_USER;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@ExtendWith(RestDocumentationExtension.class)
 class ReportControllerTest {
 
     @Autowired
@@ -40,7 +49,6 @@ class ReportControllerTest {
     @Mock
     private MockHttpSession mockHttpSession;
 
-    @Autowired
     private MockMvc mockMvc;
 
     @Autowired
@@ -50,7 +58,15 @@ class ReportControllerTest {
     private Board board;
 
     @BeforeEach
-    void set() {
+    void setUp(WebApplicationContext webApplicationContext,
+               RestDocumentationContextProvider restDocumentation) {
+
+        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
+                .apply(documentationConfiguration(restDocumentation))
+                .alwaysDo(print())
+                .addFilters(new CharacterEncodingFilter("UTF-8", true))
+                .build();
+
         userRepository.deleteAll();
         boardRepository.deleteAll();
         reportRepository.deleteAll();
@@ -103,7 +119,10 @@ class ReportControllerTest {
                 .andExpect(jsonPath("$.content").value("내용"))
                 .andExpect(jsonPath("$.reportContent").value("신고"))
                 .andExpect(status().isOk())
-                .andDo(print());
+                .andDo(document("board-report",
+                        requestFields(
+                                fieldWithPath("reportContent").description("신고")
+                        )));
     }
 
     @Test
@@ -138,7 +157,10 @@ class ReportControllerTest {
                         .session(mockHttpSession)
                         .content(json))
                 .andExpect(status().isConflict())
-                .andDo(print());
+                .andDo(document("board-reportDuplication",
+                        requestFields(
+                                fieldWithPath("reportContent").description("신고")
+                        )));
     }
 
     @Test
@@ -158,7 +180,10 @@ class ReportControllerTest {
                         .session(mockHttpSession)
                         .content(json))
                 .andExpect(status().isBadRequest())
-                .andDo(print());
+                .andDo(document("board-badRequest",
+                        requestFields(
+                                fieldWithPath("reportContent").description("신고")
+                        )));
     }
 
     @Test
@@ -175,6 +200,9 @@ class ReportControllerTest {
                         .session(mockHttpSession)
                         .content(json))
                 .andExpect(status().isUnauthorized())
-                .andDo(print());
+                .andDo(document("board-unauthorized",
+                        requestFields(
+                                fieldWithPath("reportContent").description("신고")
+                        )));
     }
 }
