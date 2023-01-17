@@ -54,7 +54,7 @@ public class ReportService {
     }
 
     public List<ReportBoardsResponse> getReportBoards() {
-        List<Report> reports = reportRepository.findAll();
+        List<Report> reports = reportRepository.findWithBoard();
         return reports.stream()
                 .map(r -> ReportBoardsResponse.builder()
                         .reportId(r.getId())

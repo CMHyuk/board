@@ -32,7 +32,7 @@ public class LikeService {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(BoardNotFound::new);
 
-        Optional<Like> findLike = likeRepository.findByBoardIdAndUser(boardId, findUser);
+        Optional<Like> findLike = likeRepository.findByBoardIdAndUserId(boardId, userId);
 
         Like like = Like.builder()
                 .board(board)
@@ -51,13 +51,7 @@ public class LikeService {
     }
 
     public void cancelLike(Long boardId, Long userId) {
-        User findUser = userRepository.findById(userId)
-                .orElseThrow(UserNotFound::new);
-
-        boardRepository.findById(boardId)
-                .orElseThrow(BoardNotFound::new);
-
-        Like findLike = likeRepository.findByBoardIdAndUser(boardId, findUser)
+        Like findLike = likeRepository.findByBoardIdAndUserId(boardId, userId)
                 .orElseThrow(LikeNotFound::new);
 
         likeRepository.delete(findLike);
