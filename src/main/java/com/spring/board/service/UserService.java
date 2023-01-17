@@ -6,8 +6,7 @@ import com.spring.board.domain.User;
 import com.spring.board.exception.user.DuplicationLoginIdException;
 import com.spring.board.exception.InvalidRequest;
 import com.spring.board.exception.user.UserNotFound;
-import com.spring.board.repository.LikeRepository;
-import com.spring.board.repository.UserRepository;
+import com.spring.board.repository.*;
 import com.spring.board.request.user.EditUserRequest;
 import com.spring.board.request.user.SaveUserRequest;
 import com.spring.board.response.user.SaveUserResponse;
@@ -29,7 +28,7 @@ public class UserService {
     private final LikeRepository likeRepository;
 
     public List<UserBoardResponse> getUserBoards(Long id) {
-        User user = userRepository.findById(id)
+        User user = userRepository.findUserWithBoards(id)
                 .orElseThrow(UserNotFound::new);
 
         List<Board> boards = user.getBoards();
