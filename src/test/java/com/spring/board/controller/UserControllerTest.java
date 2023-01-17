@@ -308,7 +308,7 @@ class UserControllerTest {
 
         Board savedBoard = boardRepository.save(board);
 
-        Optional<Like> findLike = likeRepository.findByBoardIdAndUser(board.getId(), user);
+        Optional<Like> findLike = likeRepository.findByBoardIdAndUserId(board.getId(), user.getId());
 
         Like like = Like.builder()
                 .board(savedBoard)

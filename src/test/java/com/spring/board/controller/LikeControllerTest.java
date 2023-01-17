@@ -112,7 +112,7 @@ class LikeControllerTest {
     @DisplayName("/board/{boardId}/cancelLike")
     void cancelLikeTest() throws Exception {
         //given
-        Optional<Like> findLike = likeRepository.findByBoardIdAndUser(board.getId(), user);
+        Optional<Like> findLike = likeRepository.findByBoardIdAndUserId(board.getId(), user.getId());
 
         Like like = Like.builder()
                 .board(board)
