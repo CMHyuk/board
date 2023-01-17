@@ -51,7 +51,7 @@ public class BoardService {
     }
 
     public BoardResponse get(Long boardId) {
-        Board board = boardRepository.findById(boardId)
+        Board board = boardRepository.findWithAll(boardId)
                 .orElseThrow(BoardNotFound::new);
 
         return BoardResponse.builder()
@@ -68,7 +68,7 @@ public class BoardService {
     }
 
     public List<BoardsResponse> getBoards(Pageable pageable) {
-        return boardRepository.findAll(pageable).stream()
+        return boardRepository.findBoardWithUser(pageable).stream()
                 .map(b -> BoardsResponse.builder()
                         .boardId(b.getId())
                         .userNickname(b.getUser().getNickname())
