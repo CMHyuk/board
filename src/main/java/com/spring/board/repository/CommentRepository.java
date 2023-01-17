@@ -9,7 +9,8 @@ import java.util.Optional;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
-    @Query(value = "select c from Comment c join fetch c.user join fetch c.board where c.id =:id")
+    @Query(value = "select c from Comment c join fetch c.user join fetch c.board " +
+            "left join fetch c.replies where c.id =:id")
     Optional<Comment> findComment(@Param("id") Long id);
 
 }
