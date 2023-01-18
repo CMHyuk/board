@@ -1,4 +1,40 @@
-# 스프링 API
+# Spring Board API
+
+## 프로젝트 계기
+차별화된 기능을 구현하기 보다는 테스트 코드, API 문서를 작성해보고 성능 개선이 목표
+
+## Technology Stack
+* Gradle 7.6
+* Spring boot 2.5.9
+* Java
+* Spring Data Jpa
+* Spring Rest Docs
+* JUnit 5
+* H2 Database
 
 ## ERD
-<img width="734" alt="스크린샷 2023-01-16 오후 5 01 56" src="https://user-images.githubusercontent.com/97818720/212627020-455d2250-4e63-4889-bb1f-0a7b65271d9e.png">
+![](../../스크린샷 2023-01-18 오후 9.15.51.png)
+
+## API 문서
+[Spring Rest Docs로 구현한 API 명세서](src/main/resources/static/docs/index.html)
+
+## 성능 개선 (진행 중)
+* 자신이 작성한 게시글 조회 쿼리 2개 -> 1개
+
+* 게시글 전체 조회 쿼리 3개 -> 1개
+
+* 단건 조회 쿼리 4개 -> 1개
+
+* 게시글 검색 쿼리 2개 -> 1개
+
+* 신고된 게시글 조회 쿼리 2개 -> 1개
+
+* 게시글 좋아요 취소 쿼리 4개 -> 2개
+
+* 게시글 삭제 쿼리 N + 1 -> 해결
+
+## 문제 해결
+
+[no - session](https://hyukk.tistory.com/15)  
+
+[데이터 삭제 N + 1](https://hyukk.tistory.com/16)
