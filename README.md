@@ -13,7 +13,7 @@
 * H2 Database
 
 ## ERD
-![](../../스크린샷 2023-01-18 오후 9.15.51.png)
+<img width="948" alt="스크린샷 2023-01-18 오후 9 15 51" src="https://user-images.githubusercontent.com/97818720/213180620-4de803f7-0bf8-49ef-a68a-3a2154e0438b.png">
 
 ## API 문서
 [Spring Rest Docs로 구현한 API 명세서](src/main/resources/static/docs/index.html)
