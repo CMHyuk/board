@@ -48,6 +48,5 @@ public class Report {
         this.setUser(user);
         this.setBoard(board);
         user.getReports().add(this);
-        board.getReports().add(this);
     }
 }
