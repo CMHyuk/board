@@ -2,6 +2,7 @@ package com.spring.board.service;
 
 import com.spring.board.domain.Board;
 import com.spring.board.domain.Comment;
+import com.spring.board.domain.Reply;
 import com.spring.board.domain.User;
 import com.spring.board.exception.board.BoardNotFound;
 import com.spring.board.exception.comment.CommentNotFound;
@@ -9,6 +10,7 @@ import com.spring.board.exception.InvalidRequest;
 import com.spring.board.exception.user.UserNotFound;
 import com.spring.board.repository.BoardRepository;
 import com.spring.board.repository.CommentRepository;
+import com.spring.board.repository.ReplyRepository;
 import com.spring.board.repository.UserRepository;
 import com.spring.board.request.comment.EditCommentRequest;
 import com.spring.board.request.comment.WriteCommentRequest;
@@ -18,6 +20,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -26,6 +30,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
+    private final ReplyRepository replyRepository;
 
     public SaveCommentResponse writeComment(Long boardId, WriteCommentRequest request, User user) {
         User findUser = userRepository.findById(user.getId())
@@ -51,8 +56,10 @@ public class CommentService {
     }
 
     public void deleteComment(Long boardId, Long commentId, User user) {
-        Comment comment = commentRepository.findComment(commentId)
+        Comment comment = commentRepository.findCommentWithUserAndBoard(commentId)
                 .orElseThrow(CommentNotFound::new);
+
+        List<Reply> replies = replyRepository.findByCommentId(commentId);
 
         if (!comment.getBoard().getId().equals(boardId)) {
             throw new BoardNotFound();
@@ -61,6 +68,8 @@ public class CommentService {
         if (!comment.getUser().getId().equals(user.getId())) {
             throw new InvalidRequest();
         }
+
+        replyRepository.deleteAllInBatch(replies);
         commentRepository.delete(comment);
     }
 
