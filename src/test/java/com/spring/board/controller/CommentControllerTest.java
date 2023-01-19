@@ -270,7 +270,7 @@ class CommentControllerTest {
         String json = objectMapper.writeValueAsString(request);
 
         //excepted
-        mockMvc.perform(patch("/board/{boardId}/editComment/{commentId}", board.getId(), 100L)
+        mockMvc.perform(patch("/board/{boardId}/editComment/{commentId}", board.getId(), 0L)
                         .contentType(APPLICATION_JSON)
                         .session(mockHttpSession)
                         .content(json))
