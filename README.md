@@ -33,6 +33,8 @@
 
 * 게시글 삭제 쿼리 N + 1 -> 해결
 
+* 댓글 삭제 n+1 -> 해결
+
 ## 문제 해결
 
 [no - session](https://hyukk.tistory.com/15)  
