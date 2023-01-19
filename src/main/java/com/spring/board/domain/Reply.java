@@ -56,7 +56,7 @@ public class Reply {
         comment.getReplies().add(this);
     }
 
-    public void UpdateReply(String reply) {
+    public void updateReply(String reply) {
         this.reply = reply;
     }
 }

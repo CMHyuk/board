@@ -55,7 +55,7 @@ public class ReplyService {
     public EditReplyResponse editReply(User user, Long boardId, Long commentId,
                                       Long replyId, EditReplyRequest request) {
         Reply reply = validateAndGetReply(user, boardId, commentId, replyId);
-        reply.UpdateReply(request.getReply());
+        reply.updateReply(request.getReply());
         return new EditReplyResponse(user.getNickname(), reply.getReply());
     }
 
