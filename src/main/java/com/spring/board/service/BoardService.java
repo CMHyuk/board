@@ -56,6 +56,7 @@ public class BoardService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
     public BoardResponse get(Long boardId) {
         Board board = boardRepository.findWithAll(boardId)
                 .orElseThrow(BoardNotFound::new);
@@ -73,6 +74,7 @@ public class BoardService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
     public List<BoardsResponse> getBoards(Pageable pageable) {
         return boardRepository.findBoardWithUser(pageable).stream()
                 .map(b -> BoardsResponse.builder()
@@ -84,6 +86,7 @@ public class BoardService {
                 .collect(toList());
     }
 
+    @Transactional(readOnly = true)
     public List<BoardsResponse> findBySearch(String title, Pageable pageable) {
         return boardRepository.findByTitleContaining(title, pageable).stream()
                 .map(b -> BoardsResponse.builder()

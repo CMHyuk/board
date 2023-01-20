@@ -27,6 +27,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final LikeRepository likeRepository;
 
+    @Transactional(readOnly = true)
     public List<UserBoardResponse> getUserBoards(Long id) {
         User user = userRepository.findUserWithBoards(id)
                 .orElseThrow(UserNotFound::new);
@@ -38,6 +39,7 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<UserBoardResponse> getLikeBoards(Long userId) {
         List<Like> boards = likeRepository.findByUserId(userId);
         return boards.stream()

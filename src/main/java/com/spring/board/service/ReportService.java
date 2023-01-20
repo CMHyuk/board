@@ -13,6 +13,7 @@ import com.spring.board.response.report.ReportBoardsResponse;
 import com.spring.board.response.report.ReportResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -53,6 +54,7 @@ public class ReportService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
     public List<ReportBoardsResponse> getReportBoards() {
         List<Report> reports = reportRepository.findWithBoard();
         return reports.stream()
