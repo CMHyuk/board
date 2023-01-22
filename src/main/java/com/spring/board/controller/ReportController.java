@@ -9,6 +9,7 @@ import com.spring.board.web.argumentresolver.Login;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -24,7 +25,7 @@ public class ReportController {
 
     @PostMapping("/board/{boardId}/report")
     public ReportResponse reportBoard(@PathVariable Long boardId, @Login User user,
-                                      @RequestBody ReportRequest request) {
+                                      @RequestBody @Valid ReportRequest request) {
         return reportService.reportBoard(boardId, user.getId(), request);
     }
 }
