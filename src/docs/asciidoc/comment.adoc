@@ -55,3 +55,5 @@ include::{snippets}/comment-unauthorized/http-response.adoc[]
 include::{snippets}/comment-boardNotFound/http-response.adoc[]
 
 include::{snippets}/comment-notFound/http-response.adoc[]
+
+include::{snippets}/comment-edit-validation/http-response.adoc[]

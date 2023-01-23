@@ -56,3 +56,5 @@ include::{snippets}/reply-delete/curl-request.adoc[]
 include::{snippets}/reply-notFound/http-response.adoc[]
 
 include::{snippets}/reply-unauthorized/http-response.adoc[]
+
+include::{snippets}/reply-edit-validation/http-response.adoc[]
