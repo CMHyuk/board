@@ -249,6 +249,36 @@ class CommentControllerTest {
     }
 
     @Test
+    @DisplayName("/board/{boardId}/editComment/{commentId} 댓글 수정 미입력 검증")
+    void validateCommentTest() throws Exception {
+        //given
+        userRepository.save(user);
+        boardRepository.save(board);
+        mockHttpSession.setAttribute(LOGIN_USER, user);
+
+        Comment comment = Comment.builder()
+                .comment("댓글")
+                .user(user)
+                .board(board)
+                .build();
+
+        commentRepository.save(comment);
+
+        EditCommentRequest request = new EditCommentRequest();
+        request.setComment("");
+
+        String json = objectMapper.writeValueAsString(request);
+
+        //excepted
+        mockMvc.perform(patch("/board/{boardId}/editComment/{commentId}", board.getId(), comment.getId())
+                        .contentType(APPLICATION_JSON)
+                        .session(mockHttpSession)
+                        .content(json))
+                .andExpect(status().isBadRequest())
+                .andDo(document("comment-edit-validation"));
+    }
+
+    @Test
     @DisplayName("/board/{boardId}/editComment/{commentId} 존재하지 않는 댓글 수정")
     void EditNonExistCommentTest() throws Exception {
         //given

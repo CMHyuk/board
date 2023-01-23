@@ -202,6 +202,35 @@ class ReplyControllerTest {
     }
 
     @Test
+    @DisplayName("/board/{boardId}/{commentId}/editReply/{replyId} 대댓글 수정 검증 테스트")
+    void validateEditReplyTest() throws Exception {
+        //given
+        Reply reply = Reply.builder()
+                .user(user)
+                .board(board)
+                .comment(comment)
+                .reply("대댓글")
+                .build();
+
+        replyRepository.save(reply);
+        mockHttpSession.setAttribute(LOGIN_USER, user);
+
+        EditReplyRequest request = new EditReplyRequest();
+        request.setReply("");
+
+        String json = objectMapper.writeValueAsString(request);
+
+        //expected
+        mockMvc.perform(patch("/board/{boardId}/{commentId}/editReply/{replyId}",
+                        board.getId(), comment.getId(), reply.getId())
+                        .contentType(APPLICATION_JSON)
+                        .session(mockHttpSession)
+                        .content(json))
+                .andExpect(status().isBadRequest())
+                .andDo(document("reply-edit-validation"));
+    }
+
+    @Test
     @DisplayName("/board/{boardId}/{commentId}/editReply/{replyId} 대댓글 수정 실패 테스트")
     void editReplyFailTest() throws Exception {
         //given

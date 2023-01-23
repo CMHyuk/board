@@ -126,6 +126,33 @@ class ReportControllerTest {
     }
 
     @Test
+    @DisplayName("/board/{boardId}/report 신고 검증 테스트")
+    void validateReportTest() throws Exception {
+        //given
+        User user1 = User.builder()
+                .nickname("닉네임")
+                .loginId("아이디")
+                .password("비밀번호")
+                .build();
+
+        userRepository.save(user1);
+        mockHttpSession.setAttribute(LOGIN_USER, user1);
+
+        ReportRequest request = new ReportRequest();
+        request.setReportContent("");
+
+        String json = objectMapper.writeValueAsString(request);
+
+        //expected
+        mockMvc.perform(post("/board/{boardId}/report", board.getId())
+                        .contentType(APPLICATION_JSON)
+                        .session(mockHttpSession)
+                        .content(json))
+                .andExpect(status().isBadRequest())
+                .andDo(document("board-report-validation"));
+    }
+
+    @Test
     @DisplayName("/board/{boardId}/report 중복 신고 테스트")
     void duplicateReportTest() throws Exception {
         //given
