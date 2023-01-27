@@ -12,6 +12,10 @@
 * JUnit 5
 * MySQL
 
+## 서비스 아키텍처
+<img src="https://user-images.githubusercontent.com/97818720/214824054-1f00f696-f1b2-4434-bfaa-d4910d9debb9.png">
+
+
 ## ERD
 <img width="948" alt="스크린샷 2023-01-18 오후 9 15 51" src="https://user-images.githubusercontent.com/97818720/213180620-4de803f7-0bf8-49ef-a68a-3a2154e0438b.png">
 
