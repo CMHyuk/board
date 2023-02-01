@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static com.spring.board.domain.Grade.RED;
+import static com.spring.board.domain.Grade.SILVER;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.data.domain.Sort.Direction.DESC;
@@ -69,6 +71,32 @@ class BoardServiceTest {
         //then
         assertEquals(write.getTitle(), "제목");
         assertEquals(write.getContent(), "내용");
+    }
+
+    @Test
+    @DisplayName("게시글 작성 시 회원 등급 변경 테스트")
+    void checkUserGrade() {
+        //given
+        User user = User.builder()
+                .nickname("닉네임")
+                .loginId("아이디")
+                .password("비밀번호")
+                .grade(SILVER)
+                .build();
+
+        userRepository.save(user);
+
+        //when
+        WriteBoardRequest request = new WriteBoardRequest();
+        WriteBoardResponse response = null;
+        for (int i = 0; i < 10; i++) {
+            request.setTitle("제목" + i);
+            request.setContent("내용" + i);
+            response = boardService.write(request, user.getId());
+        }
+
+        //then
+        assertEquals(response.getGrade(), RED);
     }
 
     @Test
