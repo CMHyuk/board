@@ -3,10 +3,11 @@ package com.spring.board.service;
 import com.spring.board.domain.Board;
 import com.spring.board.domain.Like;
 import com.spring.board.domain.User;
-import com.spring.board.exception.user.DuplicationLoginIdException;
 import com.spring.board.exception.InvalidRequest;
+import com.spring.board.exception.user.DuplicationLoginIdException;
 import com.spring.board.exception.user.UserNotFound;
-import com.spring.board.repository.*;
+import com.spring.board.repository.LikeRepository;
+import com.spring.board.repository.UserRepository;
 import com.spring.board.request.user.EditUserRequest;
 import com.spring.board.request.user.SaveUserRequest;
 import com.spring.board.response.user.SaveUserResponse;
@@ -18,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static com.spring.board.domain.Grade.SILVER;
 
 @Service
 @Transactional
@@ -52,6 +55,7 @@ public class UserService {
                 .nickname(request.getNickname())
                 .loginId(request.getLoginId())
                 .password(request.getPassword())
+                .grade(SILVER)
                 .build();
 
         validateDuplicationLoginId(user);
