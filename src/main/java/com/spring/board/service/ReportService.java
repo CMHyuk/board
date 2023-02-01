@@ -60,6 +60,7 @@ public class ReportService {
         return reports.stream()
                 .map(r -> ReportBoardsResponse.builder()
                         .reportId(r.getId())
+                        .reporter(r.getUser().getNickname())
                         .reportContent(r.getReportContent())
                         .boardId(r.getBoard().getId())
                         .title(r.getBoard().getTitle())
