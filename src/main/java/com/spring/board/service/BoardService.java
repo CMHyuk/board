@@ -1,16 +1,10 @@
 package com.spring.board.service;
 
-import com.spring.board.domain.Board;
-import com.spring.board.domain.Comment;
-import com.spring.board.domain.Reply;
-import com.spring.board.domain.User;
+import com.spring.board.domain.*;
 import com.spring.board.exception.InvalidRequest;
 import com.spring.board.exception.board.BoardNotFound;
 import com.spring.board.exception.user.UserNotFound;
-import com.spring.board.repository.BoardRepository;
-import com.spring.board.repository.CommentRepository;
-import com.spring.board.repository.ReplyRepository;
-import com.spring.board.repository.UserRepository;
+import com.spring.board.repository.*;
 import com.spring.board.request.board.EditBoardRequest;
 import com.spring.board.request.board.WriteBoardRequest;
 import com.spring.board.response.board.BoardResponse;
@@ -37,6 +31,7 @@ public class BoardService {
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
     private final ReplyRepository replyRepository;
+    private final ReportRepository reportRepository;
 
     public WriteBoardResponse write(WriteBoardRequest request, Long userId) {
         User user = userRepository.findById(userId)
@@ -51,6 +46,8 @@ public class BoardService {
         Board savedBoard = boardRepository.save(board);
 
         return WriteBoardResponse.builder()
+                .nickname(savedBoard.getUser().getNickname())
+                .grade(savedBoard.getUser().getGrade())
                 .title(savedBoard.getTitle())
                 .content(savedBoard.getContent())
                 .build();
@@ -120,7 +117,9 @@ public class BoardService {
 
         List<Comment> comments = commentRepository.findByBoardId(boardId);
         List<Reply> replies = replyRepository.findByBoardId(boardId);
+        List<Report> reports = reportRepository.findByBoardId(boardId);
 
+        reportRepository.deleteAllInBatch(reports);
         replyRepository.deleteAllInBatch(replies);
         commentRepository.deleteAllInBatch(comments);
         boardRepository.delete(findBoard);
