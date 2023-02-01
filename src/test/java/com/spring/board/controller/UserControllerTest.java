@@ -89,8 +89,8 @@ class UserControllerTest {
         //given
         SaveUserRequest request = new SaveUserRequest();
         request.setNickname("닉네임");
-        request.setLoginId("아이디");
-        request.setPassword("비밀번호");
+        request.setLoginId("testId1234");
+        request.setPassword("testPassword123!");
 
         String json = objectMapper.writeValueAsString(request);
 
@@ -99,8 +99,8 @@ class UserControllerTest {
                         .contentType(APPLICATION_JSON)
                         .content(json))
                 .andExpect(jsonPath("$.nickname").value("닉네임"))
-                .andExpect(jsonPath("$.loginId").value("아이디"))
-                .andExpect(jsonPath("$.password").value("비밀번호"))
+                .andExpect(jsonPath("$.loginId").value("testId1234"))
+                .andExpect(jsonPath("$.password").value("testPassword123!"))
                 .andExpect(status().isOk())
                 .andDo(document("user-save",
                         requestFields(
@@ -111,21 +111,42 @@ class UserControllerTest {
     }
 
     @Test
+    @DisplayName("/user/save 회원가입 오류 테스트")
+    void badRequest() throws Exception {
+        //given
+        User user = User.builder()
+                .nickname("닉네임")
+                .loginId("123")
+                .password("123")
+                .build();
+
+        String json = objectMapper.writeValueAsString(user);
+
+        mockMvc.perform(post("/user/save")
+                        .contentType(APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message[0]").value("비밀번호는 영문 + 숫자 조합으로 8 ~ 16자리를 입력해주세요."))
+                .andExpect(jsonPath("$.message[1]").value("아이디는 영문 + 숫자 조합으로 8 ~ 12자리를 입력해주세요."))
+                .andDo(document("user-badRequest"));
+    }
+
+    @Test
     @DisplayName("/user/save 중복 테스트")
     void duplicationSaveTest() throws Exception {
         //given
         User user1 = User.builder()
                 .nickname("닉네임")
-                .loginId("아이디")
-                .password("비밀번호")
+                .loginId("testId1234")
+                .password("testPassword123!")
                 .build();
 
         userRepository.save(user1);
 
         User user2 = User.builder()
                 .nickname("닉네임")
-                .loginId("아이디")
-                .password("비밀번호")
+                .loginId("testId1234")
+                .password("testPassword123!")
                 .build();
 
         String json = objectMapper.writeValueAsString(user2);
