@@ -9,7 +9,9 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.spring.board.domain.Grade.ADMIN;
 import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.EnumType.STRING;
 import static lombok.AccessLevel.PROTECTED;
 
 @Getter
@@ -28,6 +30,9 @@ public class User {
     private String loginId;
     private String password;
 
+    @Enumerated(STRING)
+    private Grade grade;
+
     @OneToMany(mappedBy = "user", cascade = ALL)
     private List<Board> boards = new ArrayList<>();
 
@@ -44,9 +49,25 @@ public class User {
     private List<Report> reports = new ArrayList<>();
 
     @Builder
-    public User(String nickname, String loginId, String password) {
+    public User(String nickname, String loginId, String password, Grade grade) {
         this.nickname = nickname;
         this.loginId = loginId;
         this.password = password;
+        this.grade = grade;
+    }
+
+    public void upgradeLevel() {
+        Grade[] grades = Grade.values();
+        for (int i = 0; i < grades.length; i++) {
+            if (grade == grades[i]) {
+                if (i == grades.length - 1) {
+                    break;
+                }
+                if (boards.size() >= grades[i + 1].getRequiredBoardCount() && grades[i + 1] != ADMIN) {
+                    grade = grades[i + 1];
+                }
+                break;
+            }
+        }
     }
 }
