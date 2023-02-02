@@ -3,7 +3,10 @@ package com.spring.board.controller;
 import com.spring.board.domain.User;
 import com.spring.board.request.board.EditBoardRequest;
 import com.spring.board.request.board.WriteBoardRequest;
-import com.spring.board.response.board.*;
+import com.spring.board.response.board.BoardResponse;
+import com.spring.board.response.board.BoardsResponse;
+import com.spring.board.response.board.EditBoardResponse;
+import com.spring.board.response.board.WriteBoardResponse;
 import com.spring.board.service.BoardService;
 import com.spring.board.web.argumentresolver.Login;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+
+import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,12 +31,12 @@ public class BoardController {
     }
 
     @GetMapping("/boards")
-    public List<BoardsResponse> getBoards(@PageableDefault Pageable pageable) {
+    public List<BoardsResponse> getBoards(@PageableDefault(sort = "id", direction = DESC) Pageable pageable) {
         return boardService.getBoards(pageable);
     }
 
     @GetMapping("/board/search")
-    public List<BoardsResponse> getBoardsBySearch(@RequestParam String title, @PageableDefault Pageable pageable) {
+    public List<BoardsResponse> getBoardsBySearch(@RequestParam String title, @PageableDefault(sort = "id", direction = DESC) Pageable pageable) {
         return boardService.findBySearch(title, pageable);
     }
 
