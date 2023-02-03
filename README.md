@@ -20,10 +20,10 @@
 <img width="948" alt="스크린샷 2023-01-18 오후 9 15 51" src="https://user-images.githubusercontent.com/97818720/213180620-4de803f7-0bf8-49ef-a68a-3a2154e0438b.png">
 
 ## API 문서
-[Spring Rest Docs로 구현한 API 명세서](http://15.165.82.137:8080/docs/index.html)
+[Spring Rest Docs로 구현한 API 명세서](http://post.o-r.kr/docs/index.html)
 
 ## 관리자 페이지
-[관리자 페이지](http://15.165.82.137:8080/admin)  
+[관리자 페이지](http://post.o-r.kr/admin)  
 아이디 : 123  
 비밀번호 : 123
 
