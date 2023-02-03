@@ -17,7 +17,7 @@
 
 
 ## ERD
-<img width="948" alt="스크린샷 2023-01-18 오후 9 15 51" src="https://user-images.githubusercontent.com/97818720/216583223-be6b7d43-cb5b-43b5-af7a-172a111a80b1.png">
+<img width="948" alt="스크린샷 2023-01-18 오후 9 15 51" src="https://user-images.githubusercontent.com/97818720/216584014-86c47a28-05a9-467e-82b6-dd74afd572c0.png">
 
 ## API 문서
 [Spring Rest Docs로 구현한 API 명세서](http://post.o-r.kr/docs/index.html)
