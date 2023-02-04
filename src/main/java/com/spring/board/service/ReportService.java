@@ -12,6 +12,7 @@ import com.spring.board.request.ReportRequest;
 import com.spring.board.response.report.ReportBoardsResponse;
 import com.spring.board.response.report.ReportResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,8 +56,8 @@ public class ReportService {
     }
 
     @Transactional(readOnly = true)
-    public List<ReportBoardsResponse> getReportBoards() {
-        List<Report> reports = reportRepository.findWithBoard();
+    public List<ReportBoardsResponse> getReportBoards(Pageable pageable) {
+        List<Report> reports = reportRepository.findWithBoard(pageable);
         return reports.stream()
                 .map(r -> ReportBoardsResponse.builder()
                         .reportId(r.getId())
