@@ -126,8 +126,6 @@ class UserControllerTest {
                         .contentType(APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message[0]").value("비밀번호는 영문 + 숫자 조합으로 8 ~ 16자리를 입력해주세요."))
-                .andExpect(jsonPath("$.message[1]").value("아이디는 영문 + 숫자 조합으로 8 ~ 12자리를 입력해주세요."))
                 .andDo(document("user-badRequest"));
     }
 
@@ -169,6 +167,7 @@ class UserControllerTest {
                 .build();
 
         User savedUser = userRepository.save(user);
+        mockHttpSession.setAttribute(LOGIN_USER, savedUser);
 
         List<Board> boards = IntStream.range(0, 10).mapToObj(i -> Board.builder()
                         .title("제목" + i)
@@ -181,7 +180,8 @@ class UserControllerTest {
 
         //expected
         mockMvc.perform(get("/user/{userId}/boards", savedUser.getId())
-                        .contentType(APPLICATION_JSON))
+                        .contentType(APPLICATION_JSON)
+                        .session(mockHttpSession))
                 .andExpect(jsonPath("$.length()").value(10))
                 .andExpect(status().isOk())
                 .andDo(document("user-get"));

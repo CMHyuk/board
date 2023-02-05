@@ -86,6 +86,7 @@ class BoardControllerTest {
                 .build();
 
         User savedUser = userRepository.save(user);
+        mockHttpSession.setAttribute(LOGIN_USER, savedUser);
 
         Board board = Board.builder()
                 .title("제목")
@@ -97,7 +98,8 @@ class BoardControllerTest {
 
         //expected
         mockMvc.perform(get("/board/{boardId}", board.getId())
-                        .contentType(APPLICATION_JSON))
+                        .contentType(APPLICATION_JSON)
+                        .session(mockHttpSession))
                 .andExpect(jsonPath("$.nickname").value("닉네임"))
                 .andExpect(jsonPath("$.boardId").value(board.getId()))
                 .andExpect(jsonPath("$.title").value("제목"))
