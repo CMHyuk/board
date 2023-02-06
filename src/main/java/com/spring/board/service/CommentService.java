@@ -46,7 +46,11 @@ public class CommentService {
                 .build();
 
         Comment savedComment = commentRepository.save(comment);
-        return new SaveCommentResponse(savedComment.getComment(), savedComment.getUser().getNickname());
+
+        return SaveCommentResponse.builder()
+                .comment(savedComment.getComment())
+                .nickname(savedComment.getUser().getNickname())
+                .build();
     }
 
     public EditCommentResponse editComment(Long boardId, Long commentId, User user, EditCommentRequest request) {
