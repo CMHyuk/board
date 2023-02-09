@@ -20,4 +20,6 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     @Query(value = "select b from Board b join fetch b.user left join fetch b.comments where b.id =:id")
     Optional<Board> findWithAll(@Param("id") Long id);
 
+    List<Board> findByUserId(Long id);
+
 }
