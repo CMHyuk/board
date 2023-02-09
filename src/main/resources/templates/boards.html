@@ -1,0 +1,81 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header" />
+<body>
+
+<div class="container">
+    <div th:replace="fragments/bodyHeader :: bodyHeader" />
+    <div>
+        <div>
+            <form th:object="${boardSearch}" class="form-inline">
+                <div class="form-group mb-2">
+                    <input type="text" th:field="*{title}" class="form-control" placeholder="제목"/>
+                </div>
+                <button type="submit" class="btn btn-primary mb-2">검색</button>
+            </form>
+        </div>
+
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>작성자</th>
+                <th>작성일</th>
+                <th>제목</th>
+                <th>내용</th>
+                <th>좋아요 수</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="board : ${boards}">
+                <td><a th:href="'/admin/board/'+${board.id}" th:text="${board.id}"></a></td>
+                <td th:text="${board.user.nickname}"></td>
+                <td th:text="${board.getCreatedDate()}"></td>
+                <td th:text="${board.title}"></td>
+                <td th:text="${board.content}"></td>
+                <td th:text="${board.getLikes().size()}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="page-num"
+         th:with="start=${(pages.number/maxPage)*maxPage + 1},
+                  end=(${(pages.totalPages == 0) ? 1 : (start + (maxPage - 1) < pages.totalPages ? start + (maxPage - 1) : pages.totalPages)})" >
+        <ul class="pagination">
+            <li class="page-item" th:if="${start > 1}">
+                <a class="page-link" th:href="@{/admin/boards?(page=1)}">
+                    <span aria-hidden="true" th:text="'<<'"></span>
+                </a></li>
+            </li>
+
+            <li class="page-item" th:if="${pages.number + 1 > 1}">
+                <a class="page-link" th:href="@{/admin/boards?(page=${pages.number})}">
+                    <span aria-hidden="true" th:text="'<'"></span>
+                </a>
+            </li>
+            <th:block>
+                <li class="page-item" th:each="page: ${#numbers.sequence(start, end)}">
+                    <a class="page-link" th:href="@{/admin/boards?(page=${page})}" th:text="${page}"></a></li>
+                </li>
+            </th:block>
+            <li class="page-item" th:if="${pages.number + 1 < pages.totalPages && end < pages.totalPages}">
+                <a class="page-link" th:href="@{/admin/boards?(page=${pages.number + 2})}">
+                    <span aria-hidden="true" th:text="'>'"></span>
+                </a>
+            </li>
+
+            <li class="page-item" th:if="${end < pages.totalPages}">
+                <a class="page-link" th:href="@{/admin/boards?(page=${pages.totalPages})}">
+                    <span aria-hidden="true" th:text="'>>'"></span>
+                </a></li>
+            </li>
+        </ul>
+    </div>
+
+    <div th:replace="fragments/footer :: footer" />
+
+</div> <!-- /container -->
+
+</body>
+</html>

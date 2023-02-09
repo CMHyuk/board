@@ -1,0 +1,70 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header" />
+<body>
+
+<div class="container">
+    <div th:replace="fragments/bodyHeader :: bodyHeader" />
+    <div>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>신고자</th>
+                <th>신고 내용</th>
+                <th>제목</th>
+                <th>내용</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="reportBoard : ${reportBoards}">
+                <td><a th:href="'/admin/board/'+${reportBoard.boardId}" th:text="${reportBoard.boardId}"></a></td>
+                <td th:text="${reportBoard.reporter}"></td>
+                <td th:text="${reportBoard.reportContent}"></td>
+                <td th:text="${reportBoard.title}"></td>
+                <td th:text="${reportBoard.content}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="page-num"
+         th:with="start=${(pages.number/maxPage)*maxPage + 1},
+                  end=(${(pages.totalPages == 0) ? 1 : (start + (maxPage - 1) < pages.totalPages ? start + (maxPage - 1) : pages.totalPages)})" >
+        <ul class="pagination">
+            <li class="page-item" th:if="${start > 1}">
+                <a class="page-link" th:href="@{/admin/reportBoards?(page=1)}">
+                    <span aria-hidden="true" th:text="'<<'"></span>
+                </a></li>
+            </li>
+
+            <li class="page-item" th:if="${pages.number + 1 > 1}">
+                <a class="page-link" th:href="@{/admin/reportBoards?(page=${pages.number})}">
+                    <span aria-hidden="true" th:text="'<'"></span>
+                </a>
+            </li>
+            <th:block>
+                <li class="page-item" th:each="page: ${#numbers.sequence(start, end)}">
+                    <a class="page-link" th:href="@{/admin/reportBoards?(page=${page})}" th:text="${page}"></a></li>
+                </li>
+            </th:block>
+            <li class="page-item" th:if="${pages.number + 1 < pages.totalPages && end < pages.totalPages}">
+                <a class="page-link" th:href="@{/admin/reportBoards?(page=${pages.number + 2})}">
+                    <span aria-hidden="true" th:text="'>'"></span>
+                </a>
+            </li>
+
+            <li class="page-item" th:if="${end < pages.totalPages}">
+                <a class="page-link" th:href="@{/admin/reportBoards?(page=${pages.totalPages})}">
+                    <span aria-hidden="true" th:text="'>>'"></span>
+                </a></li>
+            </li>
+        </ul>
+    </div>
+
+    <div th:replace="fragments/footer :: footer" />
+
+</div> <!-- /container -->
+
+</body>
+</html>

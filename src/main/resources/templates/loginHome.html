@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header">
+    <title>Admin</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="jumbotron">
+        <h1>관리자 페이지</h1>
+        <a class="btn btn-primary" href="/admin/users" role="button">회원 관리</a>
+        <a class="btn btn-primary" href="/admin/boards" role="button">게시글 관리</a>
+        <a class="btn btn-primary" href="/admin/reportBoards" role="button">신고 게시글 관리</a>
+
+    </div>
+
+    <div th:replace="fragments/footer :: footer" />
+
+</div> <!-- /container -->
+
+</body>
+</html>

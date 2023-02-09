@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header">
+    <title>Admin</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+
+<body>
+
+<div class="container" style="max-width: 600px">
+    <div class="py-5 text-center">
+        <h2>관리자 페이지</h2>
+    </div>
+
+    <div class="col">
+        <button class="w-100 btn btn-dark btn-lg"
+                th:onclick="|location.href='@{/admin/login}'|" type="button">
+            로그인
+        </button>
+    </div>
+
+    <div th:replace="fragments/footer :: footer" />
+</div>
+
+</body>
+</html>

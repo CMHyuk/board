@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header">
+    <meta charset="UTF-8">
+</head>
+<body>
+<div class="container">
+
+    <div th:replace="fragments/bodyHeader :: bodyHeader"/>
+
+    <table class="board_detail">
+        <colgroup>
+            <col width="15%"/>
+            <col width="35%"/>
+            <col width="15%"/>
+            <col width="35%"/>
+        </colgroup>
+
+        <tbody>
+        <tr>
+            <th scope="row">글 번호</th>
+            <td th:text="${board.id}"></td>
+        </tr>
+        <tr>
+            <th scope="row">작성자</th>
+            <td th:text="${board.user.nickname}"></td>
+            <th scope="row">작성일</th>
+            <td th:text="${#temporals.format(board.getCreatedDate(), 'yyyy-MM-dd')}"></td>
+        </tr>
+        <tr>
+            <th scope="row">제목</th>
+            <td th:text="${board.title}"></td>
+            </td>
+        </tr>
+        <td th:text="${board.content}"></td>
+        </tbody>
+    </table>
+    <form id="delete-form" th:action="@{'/admin/board/delete/' + ${board.id}}" method="post">
+        <input type="hidden" name="_method" value="delete"/>
+        <button class="btn btn-warning" id="delete-btn">게시글 삭제</button>
+    </form>
+    <hr class="one">
+    댓글 <td th:text="${board.getComments().size()}"></td>
+    <hr class="one">
+    <div th:each="comment : ${comments}">
+        <form id="delete-comment-form" th:action="@{'/admin/board/deleteComment/' + ${comment.id}}" method="post">
+            <input type="hidden" name="_method" value="delete"/>
+            <button class="btn btn-warning" id="delete-comment-btn">댓글 삭제</button>
+        </form>
+        <p th:text="${comment.getUser().getNickname()} + ' : ' + ${comment.getComment()}"></p>
+        <td th:each="reply : ${comment.getReplies()}">
+            <form id="delete-reply-form" th:action="@{'/admin/board/deleteReply/' + ${reply.id}}" method="post">
+                <input type="hidden" name="_method" value="delete"/>
+                <button class="btn btn-warning" id="delete-reply-btn">대댓글 삭제</button>
+            </form>
+            <p th:text=" '&#8627;   ' + ${reply.getUser().getNickname()} + ' : ' + ${reply.getReply()}"></p>
+        </td>
+        <hr class="one">
+    </div>
+    <div th:replace="fragments/footer :: footer" />
+</body>
+</html>
