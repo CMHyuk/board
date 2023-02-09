@@ -6,8 +6,7 @@ import com.spring.board.domain.User;
 import com.spring.board.exception.InvalidRequest;
 import com.spring.board.exception.user.DuplicationLoginIdException;
 import com.spring.board.exception.user.UserNotFound;
-import com.spring.board.repository.LikeRepository;
-import com.spring.board.repository.UserRepository;
+import com.spring.board.repository.*;
 import com.spring.board.request.user.EditUserRequest;
 import com.spring.board.request.user.SaveUserRequest;
 import com.spring.board.response.user.SaveUserResponse;
@@ -28,7 +27,11 @@ import static com.spring.board.domain.Grade.SILVER;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final BoardRepository boardRepository;
     private final LikeRepository likeRepository;
+    private final ReportRepository reportRepository;
+    private final CommentRepository commentRepository;
+    private final ReplyRepository replyRepository;
 
     @Transactional(readOnly = true)
     public List<UserBoardResponse> getUserBoards(Long id) {
@@ -85,6 +88,8 @@ public class UserService {
 
     public void deleteUser(Long id, User user) {
         User findUser = checkSameUser(id, user);
+        reportRepository.deleteAllInBatch(reportRepository.findByUserId(id));
+        deleteUserBoards(boardRepository.findByUserId(id));
         userRepository.delete(findUser);
     }
 
@@ -97,5 +102,16 @@ public class UserService {
         }
 
         return findUser;
+    }
+
+    private void deleteUserBoards(List<Board> boards) {
+        boards.stream()
+                .forEach(b -> deleteUserCommentsAndReplies(b.getId()));
+        boardRepository.deleteAllInBatch(boards);
+    }
+
+    private void deleteUserCommentsAndReplies(Long boardId) {
+        replyRepository.deleteAllInBatch(replyRepository.findByBoardId(boardId));
+        commentRepository.deleteAllInBatch(commentRepository.findByBoardId(boardId));
     }
 }
