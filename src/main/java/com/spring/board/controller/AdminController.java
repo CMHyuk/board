@@ -6,7 +6,7 @@ import com.spring.board.exception.comment.CommentNotFound;
 import com.spring.board.exception.reply.ReplyNotFound;
 import com.spring.board.exception.user.UserNotFound;
 import com.spring.board.repository.*;
-import com.spring.board.request.LoginForm;
+import com.spring.board.request.login.LoginForm;
 import com.spring.board.request.board.BoardSearch;
 import com.spring.board.request.user.EditUserRequest;
 import com.spring.board.request.user.UserSearch;

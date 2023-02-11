@@ -6,7 +6,7 @@ import com.spring.board.domain.User;
 import com.spring.board.repository.BoardRepository;
 import com.spring.board.repository.ReportRepository;
 import com.spring.board.repository.UserRepository;
-import com.spring.board.request.ReportRequest;
+import com.spring.board.request.report.ReportRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

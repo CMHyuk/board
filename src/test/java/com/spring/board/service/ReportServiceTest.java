@@ -7,7 +7,7 @@ import com.spring.board.exception.report.ReportInvalidRequest;
 import com.spring.board.repository.BoardRepository;
 import com.spring.board.repository.ReportRepository;
 import com.spring.board.repository.UserRepository;
-import com.spring.board.request.ReportRequest;
+import com.spring.board.request.report.ReportRequest;
 import com.spring.board.response.report.ReportBoardsResponse;
 import com.spring.board.response.report.ReportResponse;
 import org.junit.jupiter.api.BeforeEach;

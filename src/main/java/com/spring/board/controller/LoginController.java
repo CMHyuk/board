@@ -1,8 +1,8 @@
 package com.spring.board.controller;
 
 import com.spring.board.domain.User;
-import com.spring.board.request.LoginRequest;
-import com.spring.board.response.LoginResponse;
+import com.spring.board.request.login.LoginRequest;
+import com.spring.board.response.login.LoginResponse;
 import com.spring.board.service.LoginService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;

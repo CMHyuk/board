@@ -3,7 +3,7 @@ package com.spring.board.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spring.board.domain.User;
 import com.spring.board.repository.UserRepository;
-import com.spring.board.request.LoginRequest;
+import com.spring.board.request.login.LoginRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

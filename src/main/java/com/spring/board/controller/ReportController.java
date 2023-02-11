@@ -1,7 +1,7 @@
 package com.spring.board.controller;
 
 import com.spring.board.domain.User;
-import com.spring.board.request.ReportRequest;
+import com.spring.board.request.report.ReportRequest;
 import com.spring.board.response.report.ReportBoardsResponse;
 import com.spring.board.response.report.ReportResponse;
 import com.spring.board.service.ReportService;

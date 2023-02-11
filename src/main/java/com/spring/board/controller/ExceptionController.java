@@ -1,8 +1,8 @@
 package com.spring.board.controller;
 
 import com.spring.board.exception.Exception;
-import com.spring.board.response.BindErrorResponse;
-import com.spring.board.response.ErrorResponse;
+import com.spring.board.response.error.BindErrorResponse;
+import com.spring.board.response.error.ErrorResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
