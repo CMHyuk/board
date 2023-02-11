@@ -1,4 +1,4 @@
-package com.spring.board.request;
+package com.spring.board.request.report;
 
 import lombok.Getter;
 import lombok.Setter;

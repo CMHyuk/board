@@ -1,4 +1,4 @@
-package com.spring.board.response;
+package com.spring.board.response.error;
 
 import lombok.Builder;
 import lombok.Getter;
