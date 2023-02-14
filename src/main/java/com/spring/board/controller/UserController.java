@@ -9,7 +9,6 @@ import com.spring.board.response.user.UserBoardResponse;
 import com.spring.board.service.UserService;
 import com.spring.board.web.argumentresolver.Login;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class UserController {
