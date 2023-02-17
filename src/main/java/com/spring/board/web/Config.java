@@ -17,7 +17,7 @@ public class Config implements WebMvcConfigurer {
         registry.addInterceptor(new LoginCheckInterceptor())
                 .order(1)
                 .excludePathPatterns("/boards", "/board/search", "/login", "/user/save",
-                        "/admin", "/admin/login");
+                        "/admin", "/admin/login", "/docs/**");
     }
 
     @Override
