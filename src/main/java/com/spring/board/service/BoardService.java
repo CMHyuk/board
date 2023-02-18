@@ -115,14 +115,14 @@ public class BoardService {
                 .orElseThrow(BoardNotFound::new);
         validateSameUser(user, findBoard);
 
-        List<Comment> comments = commentRepository.findByBoardId(boardId);
-        List<Reply> replies = replyRepository.findByBoardId(boardId);
-        List<Report> reports = reportRepository.findByBoardId(boardId);
-
-        reportRepository.deleteAllInBatch(reports);
-        replyRepository.deleteAllInBatch(replies);
-        commentRepository.deleteAllInBatch(comments);
+        deleteReportReplyAndComment(boardId);
         boardRepository.delete(findBoard);
+    }
+
+    private void deleteReportReplyAndComment(Long boardId) {
+        reportRepository.deleteAllInBatch(reportRepository.findByBoardId(boardId));
+        replyRepository.deleteAllInBatch(replyRepository.findByBoardId(boardId));
+        commentRepository.deleteAllInBatch(commentRepository.findByBoardId(boardId));
     }
 
     private void validateSameUser(User user, Board findBoard) {
