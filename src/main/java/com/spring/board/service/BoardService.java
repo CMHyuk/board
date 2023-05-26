@@ -23,7 +23,7 @@ import java.util.List;
 import static java.util.stream.Collectors.toList;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class BoardService {
 
@@ -33,6 +33,7 @@ public class BoardService {
     private final ReplyRepository replyRepository;
     private final ReportRepository reportRepository;
 
+    @Transactional
     public WriteBoardResponse write(WriteBoardRequest request, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFound::new);
@@ -53,7 +54,6 @@ public class BoardService {
                 .build();
     }
 
-    @Transactional(readOnly = true)
     public BoardResponse get(Long boardId) {
         Board board = boardRepository.findWithAll(boardId)
                 .orElseThrow(BoardNotFound::new);
@@ -71,7 +71,6 @@ public class BoardService {
                 .build();
     }
 
-    @Transactional(readOnly = true)
     public List<BoardsResponse> getBoards(Pageable pageable) {
         return boardRepository.findBoardWithUser(pageable).stream()
                 .map(b -> BoardsResponse.builder()
@@ -83,7 +82,6 @@ public class BoardService {
                 .collect(toList());
     }
 
-    @Transactional(readOnly = true)
     public List<BoardsResponse> findBySearch(String title, Pageable pageable) {
         return boardRepository.findByTitleContaining(title, pageable).stream()
                 .map(b -> BoardsResponse.builder()
@@ -95,6 +93,7 @@ public class BoardService {
                 .collect(toList());
     }
 
+    @Transactional
     public EditBoardResponse editBoard(Long boardId, EditBoardRequest request, User user) {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(BoardNotFound::new);
@@ -110,6 +109,7 @@ public class BoardService {
                 .build();
     }
 
+    @Transactional
     public void deleteBoard(Long boardId, User user) {
         Board findBoard = boardRepository.findById(boardId)
                 .orElseThrow(BoardNotFound::new);

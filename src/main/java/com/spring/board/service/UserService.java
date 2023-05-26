@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 import static com.spring.board.domain.Grade.SILVER;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class UserService {
 
@@ -33,7 +33,6 @@ public class UserService {
     private final CommentRepository commentRepository;
     private final ReplyRepository replyRepository;
 
-    @Transactional(readOnly = true)
     public List<UserBoardResponse> getUserBoards(Long id) {
         User user = userRepository.findUserWithBoards(id)
                 .orElseThrow(UserNotFound::new);
@@ -45,7 +44,6 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional(readOnly = true)
     public List<UserBoardResponse> getLikeBoards(Long userId) {
         List<Like> boards = likeRepository.findByUserId(userId);
         return boards.stream()
@@ -53,6 +51,7 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public SaveUserResponse save(SaveUserRequest request) {
         User user = User.builder()
                 .nickname(request.getNickname())
@@ -80,6 +79,7 @@ public class UserService {
         }
     }
 
+    @Transactional
     public User editUserPassword(Long id, EditUserRequest request, User user) {
         User findUser = checkSameUser(id, user);
         findUser.setPassword(request.getPassword());

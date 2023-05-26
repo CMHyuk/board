@@ -21,7 +21,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ReportService {
 
@@ -29,6 +29,7 @@ public class ReportService {
     private final BoardRepository boardRepository;
     private final ReportRepository reportRepository;
 
+    @Transactional
     public ReportResponse reportBoard(Long boardId, Long userId, ReportRequest request) {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(BoardNotFound::new);
@@ -56,7 +57,6 @@ public class ReportService {
                 .build();
     }
 
-    @Transactional(readOnly = true)
     public List<ReportBoardsResponse> getReportBoards(Pageable pageable) {
         List<Report> reports = reportRepository.findWithBoard(pageable);
         return reports.stream()
