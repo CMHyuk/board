@@ -3,13 +3,8 @@ package com.spring.board.domain;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-
-import java.time.LocalDateTime;
 
 import static javax.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
@@ -17,8 +12,7 @@ import static lombok.AccessLevel.PROTECTED;
 @Getter
 @Entity
 @NoArgsConstructor(access = PROTECTED)
-@EntityListeners(AuditingEntityListener.class)
-public class Reply {
+public class Reply extends BaseEntity {
 
     @Id
     @GeneratedValue
@@ -26,12 +20,6 @@ public class Reply {
     private Long id;
 
     private String reply;
-
-    @CreatedDate
-    private LocalDateTime createdDate;
-
-    @LastModifiedDate
-    private LocalDateTime modifiedDate;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "user_id")

@@ -4,12 +4,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,8 +17,7 @@ import static lombok.AccessLevel.PROTECTED;
 @Setter
 @Entity
 @NoArgsConstructor(access = PROTECTED)
-@EntityListeners(AuditingEntityListener.class)
-public class Comment {
+public class Comment extends BaseEntity {
 
     @Id
     @GeneratedValue
@@ -30,12 +25,6 @@ public class Comment {
     private Long id;
 
     private String comment;
-
-    @CreatedDate
-    private LocalDateTime createdDate;
-
-    @LastModifiedDate
-    private LocalDateTime modifiedDate;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "board_id")

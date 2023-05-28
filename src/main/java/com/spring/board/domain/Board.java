@@ -4,12 +4,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,8 +17,7 @@ import static lombok.AccessLevel.PROTECTED;
 @Setter
 @Entity
 @NoArgsConstructor(access = PROTECTED)
-@EntityListeners(AuditingEntityListener.class)
-public class Board {
+public class Board extends BaseEntity {
 
     @Id
     @GeneratedValue
@@ -33,12 +28,6 @@ public class Board {
 
     @Lob
     private String content;
-
-    @CreatedDate
-    private LocalDate createdDate;
-
-    @LastModifiedDate
-    private LocalDate modifiedDate;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "user_id")
