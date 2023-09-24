@@ -19,14 +19,6 @@
 ## ERD
 <img width="948" alt="스크린샷 2023-01-18 오후 9 15 51" src="https://user-images.githubusercontent.com/97818720/218247969-2a3ff475-2cb3-4b00-9ea5-46c25210d054.png">
 
-## API 문서
-[Spring Rest Docs로 구현한 API 명세서](http://post.o-r.kr/docs/index.html)
-
-## 관리자 페이지
-[관리자 페이지](http://post.o-r.kr/admin)  
-아이디 : 123  
-비밀번호 : 123
-
 ## 성능 개선
 * 자신이 작성한 게시글 조회 쿼리 2개 -> 1개
 
